@@ -1,0 +1,12 @@
+<mat-toolbar class="bar">
+  <a class="brand" routerLink="/student">Comzhichi</a>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+    <mat-label>Buscar cursos por nombre</mat-label>
+    <input matInput type="search" />
+  </mat-form-field>
+  <span class="spacer"></span>
+  <button matButton (click)="logout()">Salir</button>
+</mat-toolbar>
+<main class="content">
+  <router-outlet />
+</main>

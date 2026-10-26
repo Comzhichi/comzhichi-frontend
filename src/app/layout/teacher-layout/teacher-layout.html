@@ -1,0 +1,19 @@
+<mat-sidenav-container class="container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <h2 class="title">Panel docente</h2>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/teacher/home" routerLinkActive #p="routerLinkActive" [activated]="p.isActive">Inicio</a>
+      <a mat-list-item>Mis cursos</a>
+      <a mat-list-item>Evaluaciones</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar>
+      <span class="spacer"></span>
+      <button matButton (click)="logout()">Salir</button>
+    </mat-toolbar>
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

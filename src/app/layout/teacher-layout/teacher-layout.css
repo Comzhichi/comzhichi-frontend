@@ -1,0 +1,18 @@
+.container {
+  height: 100vh;
+}
+.sidenav {
+  width: 240px;
+  padding: 8px;
+}
+.title {
+  margin: 0;
+  padding: 24px 16px 8px;
+  font: var(--mat-sys-title-medium);
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.content {
+  padding: 24px;
+}
