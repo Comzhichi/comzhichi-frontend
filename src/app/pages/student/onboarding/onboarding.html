@@ -1,0 +1,229 @@
+<div class="onboarding-wrap">
+  <section class="card" aria-labelledby="onboarding-title">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" [style.width.%]="progress()"></div>
+    </div>
+    <p class="progress-label">
+      @if (step() >= 4) {
+        Completado
+      } @else {
+        Paso {{ step() }} de {{ totalSteps }}
+      }
+    </p>
+
+    @if (step() === 1) {
+      <h1 id="onboarding-title" class="card-title">Antes de comenzar</h1>
+      <p class="card-desc">
+        Hemos detectado que eres un estudiante, por lo que necesitamos que respondas unas preguntas
+      </p>
+
+      <div class="question-block">
+        <p class="question">¿Has llevado algún curso antes en este centro de idiomas?</p>
+
+        <mat-radio-group
+          class="answers"
+          [value]="hadCourse()"
+          (change)="selectQ1($event.value)"
+          aria-label="Respuesta sobre cursos previos"
+        >
+          <label class="answer-card" [class.selected]="hadCourse() === true">
+            <mat-radio-button [value]="true"></mat-radio-button>
+            <span class="answer-label">Sí</span>
+          </label>
+          <label class="answer-card" [class.selected]="hadCourse() === false">
+            <mat-radio-button [value]="false"></mat-radio-button>
+            <span class="answer-label">No</span>
+          </label>
+        </mat-radio-group>
+      </div>
+
+      <div class="actions">
+        <button
+          matButton="filled"
+          class="continue-btn"
+          type="button"
+          [disabled]="hadCourse() === null"
+          (click)="continueQ1()"
+        >
+          Continuar
+        </button>
+      </div>
+    }
+
+    @if (step() === 2) {
+      <h1 class="card-title">Busca tu curso anterior</h1>
+      <p class="card-desc">
+        ¿Cómo se llamaba dicho curso? De no recordar el nombre con exactitud, puedes buscarlo.
+      </p>
+
+      <div class="filters">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Buscar por nombre del curso</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Filtrar por turno</mat-label>
+          <mat-select [value]="shiftFilter()" (selectionChange)="shiftFilter.set($event.value)">
+            <mat-option value="">Todos los turnos</mat-option>
+            <mat-option value="Manana">Mañana</mat-option>
+            <mat-option value="Tarde">Tarde</mat-option>
+            <mat-option value="Noche">Noche</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (filteredCourses().length === 0) {
+        <p class="no-results">
+          No se encontraron cursos con el texto ingresado, intenta con otro texto
+        </p>
+      } @else {
+        <mat-radio-group
+          class="course-list"
+          [value]="selectedCourse()?.name ?? null"
+          (change)="selectCourse(filteredCourses().find((c) => c.name === $event.value)!)"
+          aria-label="Cursos disponibles"
+        >
+          @for (c of filteredCourses(); track c.name) {
+            <label class="course-card" [class.selected]="selectedCourse()?.name === c.name">
+              <mat-radio-button [value]="c.name"></mat-radio-button>
+              <div class="course-info">
+                <div class="course-name">{{ c.name }}</div>
+                <div class="course-meta">
+                  Nivel: {{ c.level }} · Sección: {{ c.section }} · Turno: {{ c.shift }}
+                </div>
+                <div class="course-desc">{{ c.description }}</div>
+              </div>
+            </label>
+          }
+        </mat-radio-group>
+      }
+
+      <div class="actions dual">
+        <button matButton="outlined" class="skip-btn" type="button" (click)="skipCourse()">
+          No lo recuerdo
+        </button>
+        <button
+          matButton="filled"
+          class="continue-btn"
+          type="button"
+          [disabled]="!selectedCourse()"
+          (click)="confirmCourse()"
+        >
+          Confirmar curso seleccionado
+        </button>
+      </div>
+    }
+
+    @if (step() === 3 && hadCourse() === false) {
+      <h1 class="card-title">Sin cursos previos</h1>
+      <p class="card-desc">
+        No tienes cursos previos registrados. Puedes continuar con tu onboarding.
+      </p>
+      <div class="actions">
+        <button matButton="filled" class="continue-btn" type="button" (click)="finishNoCourse()">
+          Continuar
+        </button>
+      </div>
+    }
+
+    @if (step() === 3 && hadCourse() !== false) {
+      <h1 class="card-title">Calificación y asistencia</h1>
+      <p class="card-desc">
+        ¿Recuerdas tu calificación final y tu porcentaje de asistencia? De no recordarlo, puedes
+        solamente indicar si eran suficientes para aprobar el curso.
+      </p>
+
+      <div class="grade-fields">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Calificación final</mat-label>
+          <input
+            matInput
+            type="number"
+            [value]="grade()"
+            (input)="grade.set($any($event.target).value)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Porcentaje de asistencia final</mat-label>
+          <input
+            matInput
+            type="number"
+            [value]="attendance()"
+            (input)="attendance.set($any($event.target).value)"
+          />
+        </mat-form-field>
+      </div>
+      @if (submitted() && gradeError()) {
+        <p class="field-error">{{ gradeError() }}</p>
+      }
+      @if (submitted() && attendanceError()) {
+        <p class="field-error">{{ attendanceError() }}</p>
+      }
+
+      <mat-radio-group
+        class="sufficiency-options"
+        [value]="sufficiency()"
+        (change)="sufficiency.set($event.value)"
+        aria-label="Suficiencia de calificación y asistencia"
+      >
+        <label class="answer-card" [class.selected]="sufficiency() === 'insufficientGrade'">
+          <mat-radio-button value="insufficientGrade"></mat-radio-button>
+          <span class="answer-label">Mi calificación final no fue la suficiente</span>
+        </label>
+        <label class="answer-card" [class.selected]="sufficiency() === 'insufficientAttendance'">
+          <mat-radio-button value="insufficientAttendance"></mat-radio-button>
+          <span class="answer-label">Mi asistencia final no fue la suficiente</span>
+        </label>
+        <label class="answer-card" [class.selected]="sufficiency() === 'sufficient'">
+          <mat-radio-button value="sufficient"></mat-radio-button>
+          <span class="answer-label"
+            >Mi calificación y asistencia finales fueron las suficientes</span
+          >
+        </label>
+      </mat-radio-group>
+
+      @if (submitted() && generalError()) {
+        <p class="field-error general">{{ generalError() }}</p>
+      }
+      <div class="actions">
+        <button
+          matButton="filled"
+          class="continue-btn"
+          type="button"
+          [disabled]="!canContinueQ3()"
+          (click)="confirmAnswers()"
+        >
+          Confirmo mis respuestas
+        </button>
+      </div>
+    }
+    @if (step() === 4) {
+      <div class="thanks">
+        <div class="thanks-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <h1 class="card-title center-title">Gracias por responder</h1>
+        <p class="card-desc center-desc">
+          Tus respuestas se registraron correctamente. Ya puedes continuar con tu proceso académico.
+        </p>
+        <div class="actions center-actions">
+          <button
+            matButton="filled"
+            class="continue-btn"
+            type="button"
+            (click)="goToPrerequisites()"
+          >
+            Ir a Prerrequisitos
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+</div>

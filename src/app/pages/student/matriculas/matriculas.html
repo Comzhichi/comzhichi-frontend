@@ -1,0 +1,158 @@
+<div class="matriculas-wrap">
+  @if (message()) {
+    <div
+      class="alert"
+      [class.success]="messageType() === 'success'"
+      [class.error]="messageType() === 'error'"
+    >
+      {{ message() }}
+    </div>
+  }
+
+  <mat-card class="card enrolled-card">
+    <div class="card-header">
+      <h2 class="card-title">Matrículas realizadas</h2>
+    </div>
+    @if (loading()) {
+      <div class="center"><mat-spinner diameter="36" /></div>
+    } @else if (enrolled().length === 0) {
+      <p class="empty-msg">
+        Aún no tiene matrículas realizadas. Cuando se matricule en al menos un curso, aparecerá aquí
+      </p>
+    } @else {
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Curso</th>
+              <th>Sección</th>
+              <th>Horario</th>
+              <th>Fecha de matrícula</th>
+              <th>Estado</th>
+              <th>Docente</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of enrolled(); track e.id) {
+              <tr>
+                <td>{{ e.courseName }}</td>
+                <td>{{ e.sectionGroupCode }}</td>
+                <td>{{ enrolledSchedule(e) }}</td>
+                <td>{{ e.enrollmentDate }}</td>
+                <td>
+                  <span class="status-badge" [class.active]="e.status === 'ACTIVE'">{{
+                    statusLabel(e.status)
+                  }}</span>
+                </td>
+                <td>{{ e.teacherName ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card>
+
+  <mat-card class="card register-card">
+    <div class="card-header">
+      <h2 class="card-title">Realizar matrículas</h2>
+    </div>
+
+    <p class="hint">Se ocultan los cursos en los que ya estás matriculado (activos o aprobados).</p>
+
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Ingrese nombre del curso, sección o docente que lo dicta</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Elija uno o varios filtros</mat-label>
+        <mat-select
+          multiple
+          [value]="selectedFilters()"
+          (selectionChange)="selectedFilters.set($event.value)"
+        >
+          <mat-option value="Básico">Básico</mat-option>
+          <mat-option value="Intermedio">Intermedio</mat-option>
+          <mat-option value="Avanzado">Avanzado</mat-option>
+          <mat-option value="Mañana">Mañana</mat-option>
+          <mat-option value="Tarde">Tarde</mat-option>
+          <mat-option value="Noche">Noche</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-scroll">
+      <table class="data-table available-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Curso</th>
+            <th>Nivel</th>
+            <th>Descripción</th>
+            <th>Sección</th>
+            <th>Horario</th>
+            <th>Aula</th>
+            <th>Docente</th>
+            <th>Vacantes disponibles</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filteredSections(); track s.id) {
+            <tr [class.conflict]="isConflict(s.id)" [class.selected-row]="isSelected(s.id)">
+              <td>
+                <mat-checkbox
+                  [checked]="isSelected(s.id)"
+                  [disabled]="s.availableVacancies <= 0"
+                  (change)="toggleSelect(s.id, $event.checked)"
+                ></mat-checkbox>
+              </td>
+              <td>
+                {{ s.courseName }}
+                @if (isConflict(s.id)) {
+                  <span class="conflict-badge" [title]="conflictReason(s.id)"
+                    >Cruce de horario</span
+                  >
+                }
+              </td>
+              <td>{{ s.courseLevel ?? '—' }}</td>
+              <td>{{ s.courseDescription ?? '—' }}</td>
+              <td>{{ s.groupCode }}</td>
+              <td>{{ scheduleText(s) }}</td>
+              <td>{{ s.classroom }}</td>
+              <td>{{ teacherName(s) }}</td>
+              <td>
+                <span class="vacancy" [class.none]="s.availableVacancies <= 0">{{
+                  s.availableVacancies
+                }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="register-actions">
+      <button
+        matButton="filled"
+        class="register-btn"
+        type="button"
+        [disabled]="!hasSelection() || registering()"
+        (click)="register()"
+      >
+        @if (registering()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Registrar matrícula
+        }
+      </button>
+    </div>
+  </mat-card>
+</div>

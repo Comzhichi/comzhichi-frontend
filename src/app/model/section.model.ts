@@ -9,6 +9,9 @@ export interface Section {
   availableVacancies: number;
   courseId: number;
   courseName: string;
+  courseDescription?: string;
+  courseLevel?: string;
   teacherId: number;
+  teacherName?: string;
   teacherSpecialty: string;
 }

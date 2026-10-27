@@ -1,18 +1,133 @@
-.home-wrap { padding: var(--sp-3); }
+:host {
+  display: block;
+}
 
-.home-header { margin-bottom: var(--sp-3); }
-.home-header h1 { font-size: 36px; font-weight: 700; color: var(--color-primary); }
-.home-header p  { font-size: 16px; color: var(--color-text); margin-top: var(--sp-1); }
+.dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.dash-header {
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #fbf7fd 100%);
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(69, 35, 79, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(142, 36, 170, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.dash-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #263238;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  position: relative;
+}
+
+.dash-subtitle {
+  font-size: 15px;
+  color: #687078;
+  line-height: 1.5;
+  position: relative;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbf7fd 100%);
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  color: #687078;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(69, 35, 79, 0.05);
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #8e24aa;
+}
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--sp-2);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
 }
 
-.enrollment-card { border-left: 4px solid var(--color-primary); }
-.enrollment-card mat-card-content { padding-top: var(--sp-1); }
-.enrollment-card p { margin-bottom: var(--sp-1); font-size: 14px; }
+.enrollment-card {
+  border-radius: 16px;
+  border: 1px solid #e4e4e7;
+  box-shadow: 0 2px 12px rgba(69, 35, 79, 0.05);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%);
+  overflow: hidden;
+  position: relative;
+}
 
-.center { display: flex; justify-content: center; padding: var(--sp-4); }
-.empty  { text-align: center; padding: var(--sp-4); color: #666; }
+.enrollment-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #9c27b0, #8e24aa, #6a1b9a);
+}
+
+.enrollment-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(142, 36, 170, 0.12);
+  border-color: #d8b4e8;
+}
+
+.enrollment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #687078;
+  font-size: 14px;
+  margin: 8px 0 12px;
+}
+
+.enrollment-meta mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #8e24aa;
+}
+
+.status-chip {
+  background: linear-gradient(135deg, #f5eaf8, #fceeff);
+  color: #45234f;
+  font-weight: 600;
+  border: 1px solid #e8d4f0;
+}

@@ -1,12 +1,75 @@
-<mat-toolbar class="bar">
-  <a class="brand" routerLink="/student">Comzhichi</a>
-  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-    <mat-label>Buscar cursos por nombre</mat-label>
-    <input matInput type="search" />
-  </mat-form-field>
-  <span class="spacer"></span>
-  <button matButton (click)="logout()">Salir</button>
-</mat-toolbar>
-<main class="content">
-  <router-outlet />
-</main>
+<div class="page">
+  <header class="header">
+    <div class="header-left">
+      <img src="/comzhichi-logo.png" alt="Comzhichi" class="logo-img" />
+      <a class="brand-name" routerLink="/student">Comzhichi</a>
+    </div>
+
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a class="nav-link" routerLink="/student/matriculas">Matrículas</a>
+      <a class="nav-link" href="#" (click)="$event.preventDefault()">Horario</a>
+      <a class="nav-link" routerLink="/student/prerequisites">Prerrequisitos</a>
+      <a class="nav-link" href="#" (click)="$event.preventDefault()">Progreso</a>
+    </nav>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-label>Buscar cursos por nombre</mat-label>
+      <input matInput type="search" />
+    </mat-form-field>
+
+    <div class="header-right">
+      <div class="student-info">
+        <span class="student-name">{{ userName }}</span>
+        <span class="student-email">{{ userEmail }}</span>
+      </div>
+      <div class="avatar" aria-label="Avatar del estudiante">{{ initials }}</div>
+      <a class="onboarding-link" routerLink="/student/onboarding">Onboarding</a>
+      <button matButton (click)="logout()">Salir</button>
+    </div>
+
+    <button
+      class="menu-btn"
+      type="button"
+      (click)="toggleSidebar()"
+      aria-label="Abrir menú lateral"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar" [class.open]="sidebarOpen()" (click)="closeSidebar()">
+      <nav class="sidebar-nav" (click)="$event.stopPropagation()" aria-label="Menú lateral">
+        <a class="side-item" routerLink="/student" (click)="closeSidebar()">
+          <mat-icon>dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>settings</mat-icon>
+          <span>Ajustes</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>help_outline</mat-icon>
+          <span>Centro de ayuda</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>smart_toy</mat-icon>
+          <span>Agente IA</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <router-outlet />
+    </main>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-copy">© 2026 Comzhichi. Todos los derechos reservados</span>
+    <nav class="footer-links" aria-label="Enlaces institucionales">
+      <a href="#" (click)="$event.preventDefault()">Seguridad</a>
+      <a href="#" (click)="$event.preventDefault()">Soporte técnico</a>
+      <a href="#" (click)="$event.preventDefault()">Condiciones</a>
+    </nav>
+  </footer>
+</div>

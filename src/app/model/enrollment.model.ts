@@ -8,4 +8,7 @@ export interface Enrollment {
   courseName: string;
   enrollmentDate: string;
   status: 'ACTIVE' | 'APPROVED' | 'DROPPED' | 'FAILED';
+  teacherName?: string;
+  schedule?: string;
+  classroom?: string;
 }
