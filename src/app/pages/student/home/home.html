@@ -1,9 +1,31 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>Panel del estudiante</mat-card-title>
-    <mat-card-subtitle>Vista del estudiante</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <p>Aquí se mostrarán tus cursos y tu progreso.</p>
-  </mat-card-content>
-</mat-card>
+<div class="home-wrap">
+  <div class="home-header">
+    <h1>Bienvenido, {{ userName }}</h1>
+    <p>Aquí puedes ver tus matrículas activas.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (enrollments().length === 0) {
+    <div class="empty">
+      <p>No tienes matrículas activas actualmente.</p>
+    </div>
+  } @else {
+    <div class="cards-grid">
+      @for (e of enrollments(); track e.id) {
+        <mat-card class="enrollment-card">
+          <mat-card-header>
+            <mat-card-title>{{ e.courseName }}</mat-card-title>
+            <mat-card-subtitle>{{ e.sectionGroupCode }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Fecha de matrícula:</strong> {{ e.enrollmentDate }}</p>
+            <mat-chip-set>
+              <mat-chip>{{ statusLabel(e.status) }}</mat-chip>
+            </mat-chip-set>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

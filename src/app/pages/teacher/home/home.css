@@ -1,0 +1,17 @@
+.home-wrap { padding: var(--sp-3); }
+.home-header { margin-bottom: var(--sp-3); }
+.home-header h1 { font-size: 36px; font-weight: 700; color: var(--color-secondary); }
+.home-header p  { font-size: 16px; color: var(--color-text); margin-top: var(--sp-1); }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-2);
+}
+
+.section-card { border-left: 4px solid var(--color-secondary); }
+.section-card mat-card-content { padding-top: var(--sp-1); }
+.section-card p { margin-bottom: var(--sp-1); font-size: 14px; }
+
+.center { display: flex; justify-content: center; padding: var(--sp-4); }
+.empty  { text-align: center; padding: var(--sp-4); color: #666; }

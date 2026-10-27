@@ -1,9 +1,29 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>Panel docente</mat-card-title>
-    <mat-card-subtitle>Vista del docente</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <p>Aquí podrás gestionar tus cursos y evaluaciones.</p>
-  </mat-card-content>
-</mat-card>
+<div class="home-wrap">
+  <div class="home-header">
+    <h1>Bienvenido, {{ userName }}</h1>
+    <p>Estas son tus secciones asignadas.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (sections().length === 0) {
+    <div class="empty"><p>No tienes secciones asignadas actualmente.</p></div>
+  } @else {
+    <div class="cards-grid">
+      @for (s of sections(); track s.id) {
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>{{ s.courseName }}</mat-card-title>
+            <mat-card-subtitle>{{ s.groupCode }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Días:</strong> {{ formatDays(s.dayOfWeek) }}</p>
+            <p><strong>Horario:</strong> {{ s.startTime }} – {{ s.endTime }}</p>
+            <p><strong>Aula:</strong> {{ s.classroom }}</p>
+            <p><strong>Vacantes:</strong> {{ s.availableVacancies }} / {{ s.totalVacancies }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>
