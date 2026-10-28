@@ -1,0 +1,103 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Secciones</h1>
+    @if (!showForm()) {
+      <button mat-flat-button (click)="openCreate()">
+        <mat-icon>add</mat-icon> Nueva sección
+      </button>
+    }
+  </div>
+
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ editingId() ? 'Editar sección' : 'Nueva sección' }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+          <mat-form-field>
+            <mat-label>Código de grupo</mat-label>
+            <input matInput formControlName="groupCode" placeholder="ING-B1-A" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Aula</mat-label>
+            <input matInput formControlName="classroom" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Hora inicio</mat-label>
+            <input matInput formControlName="startTime" type="time" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Hora fin</mat-label>
+            <input matInput formControlName="endTime" type="time" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Vacantes totales</mat-label>
+            <input matInput formControlName="totalVacancies" type="number" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Curso</mat-label>
+            <mat-select formControlName="courseId">
+              @for (c of courses(); track c.id) {
+                <mat-option [value]="c.id">{{ c.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Profesor</mat-label>
+            <mat-select formControlName="teacherId">
+              @for (t of teachers(); track t.id) {
+                <mat-option [value]="t.id">{{ t.userFullName }} — {{ t.specialty }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="days-wrap full">
+            <p class="days-label">Días de clase</p>
+            <div class="days-row">
+              @for (d of days; track d.value) {
+                <mat-checkbox
+                  [checked]="isDaySelected(d.value)"
+                  (change)="toggleDay(d.value)">
+                  {{ d.label }}
+                </mat-checkbox>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions full">
+            <button mat-button type="button" (click)="cancel()">Cancelar</button>
+            <button mat-flat-button type="submit">Guardar</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (sections().length === 0) {
+    <div class="empty"><p>No hay secciones registradas.</p></div>
+  } @else {
+    <div class="cards-grid">
+      @for (s of sections(); track s.id) {
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>{{ s.groupCode }}</mat-card-title>
+            <mat-card-subtitle>{{ s.courseName }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Días:</strong> {{ formatDays(s.dayOfWeek) }}</p>
+            <p><strong>Horario:</strong> {{ s.startTime }} – {{ s.endTime }}</p>
+            <p><strong>Aula:</strong> {{ s.classroom }}</p>
+            <p><strong>Vacantes:</strong> {{ s.availableVacancies }} / {{ s.totalVacancies }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-icon-button (click)="edit(s)"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button color="warn" (click)="delete(s)"><mat-icon>delete</mat-icon></button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

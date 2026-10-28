@@ -8,7 +8,7 @@ import { AuthService } from '../../../service/auth.service';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
+export class Home { 
   private auth = inject(AuthService);
   get userName() { return this.auth.currentUser()?.fullName ?? 'Apoderado'; }
 }
