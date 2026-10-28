@@ -1,0 +1,10 @@
+.page-wrap   { padding: var(--sp-3); }
+.page-header { margin-bottom: var(--sp-3); }
+.page-header h1 { font-size: 36px; font-weight: 700; color: var(--color-extra1); }
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--sp-2); }
+.teacher-card { border-left: 4px solid var(--color-secondary); }
+.teacher-card mat-card-content { padding-top: var(--sp-1); font-size: 14px; }
+
+.center { display: flex; justify-content: center; padding: var(--sp-4); }
+.empty  { text-align: center; padding: var(--sp-4); color: #666; }

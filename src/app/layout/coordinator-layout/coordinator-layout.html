@@ -2,9 +2,10 @@
   <mat-sidenav mode="side" opened class="sidenav">
     <h2 class="title">Panel de coordinación</h2>
     <mat-nav-list>
-      <a mat-list-item routerLink="/coordinator/home" routerLinkActive #p="routerLinkActive" [activated]="p.isActive">Inicio</a>
-      <a mat-list-item>Secciones</a>
-      <a mat-list-item>Docentes</a>
+      <a mat-list-item routerLink="/coordinator" routerLinkActive #i="routerLinkActive" [activated]="i.isActive" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
+      <a mat-list-item routerLink="/coordinator/courses" routerLinkActive #c="routerLinkActive" [activated]="c.isActive">Cursos</a>
+      <a mat-list-item routerLink="/coordinator/sections" routerLinkActive #s="routerLinkActive" [activated]="s.isActive">Secciones</a>
+      <a mat-list-item routerLink="/coordinator/teachers" routerLinkActive #t="routerLinkActive" [activated]="t.isActive">Docentes</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
