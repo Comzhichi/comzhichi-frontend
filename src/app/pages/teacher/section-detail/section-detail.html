@@ -1,0 +1,192 @@
+<div class="page-wrap">
+  <h1>Sección — Estudiantes</h1>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (enrollments().length === 0) {
+    <div class="empty"><p>No hay estudiantes matriculados en esta sección.</p></div>
+  } @else {
+    <div class="layout">
+
+      <!-- Lista de estudiantes -->
+      <mat-card class="student-list">
+        <mat-card-header><mat-card-title>Estudiantes</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @for (e of enrollments(); track e.id) {
+            <div class="student-item"
+              [class.selected]="selected()?.id === e.id"
+              (click)="selectEnrollment(e)">
+              <span>{{ e.studentFullName }}</span>
+              <span class="course-name">{{ e.courseName }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Panel de registro -->
+      @if (selected()) {
+        <div class="detail-panel">
+          <h2>{{ selected()!.studentFullName }}</h2>
+          <p class="subtitle">{{ selected()!.courseName }} — {{ selected()!.sectionGroupCode }}</p>
+
+          <mat-tab-group>
+
+            <!-- Asistencia -->
+            <mat-tab label="Asistencia">
+              <div class="tab-content">
+                <form [formGroup]="attendanceForm" (ngSubmit)="saveAttendance()" class="inline-form">
+                  <mat-form-field>
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" formControlName="date" />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Estado</mat-label>
+                    <mat-select formControlName="status">
+                      <mat-option value="PRESENT">Presente</mat-option>
+                      <mat-option value="ABSENT">Ausente</mat-option>
+                      <mat-option value="LATE">Tardanza</mat-option>
+                      <mat-option value="JUSTIFIED">Justificado</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field class="full">
+                    <mat-label>Observación</mat-label>
+                    <input matInput formControlName="observation" />
+                  </mat-form-field>
+                  <button mat-flat-button type="submit" class="full">Registrar asistencia</button>
+                </form>
+                <table mat-table [dataSource]="attendances()" class="record-table">
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                    <td mat-cell *matCellDef="let a">{{ a.date }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Estado</th>
+                    <td mat-cell *matCellDef="let a">{{ statusLabel(a.status) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="observation">
+                    <th mat-header-cell *matHeaderCellDef>Observación</th>
+                    <td mat-cell *matCellDef="let a">{{ a.observation }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="['date','status','observation']"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['date','status','observation']"></tr>
+                </table>
+              </div>
+            </mat-tab>
+
+            <!-- Evaluaciones -->
+            <mat-tab label="Evaluaciones">
+              <div class="tab-content">
+                <form [formGroup]="evaluationForm" (ngSubmit)="saveEvaluation()" class="inline-form">
+                  <mat-form-field>
+                    <mat-label>Tipo</mat-label>
+                    <mat-select formControlName="type">
+                      <mat-option value="PARTIAL">Parcial</mat-option>
+                      <mat-option value="FINAL">Final</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" formControlName="date" />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Nota (0–100)</mat-label>
+                    <input matInput type="number" formControlName="score" />
+                  </mat-form-field>
+                  <mat-form-field class="full">
+                    <mat-label>Retroalimentación</mat-label>
+                    <input matInput formControlName="feedback" />
+                  </mat-form-field>
+                  <button mat-flat-button type="submit" class="full">Registrar evaluación</button>
+                </form>
+                <table mat-table [dataSource]="evaluations()" class="record-table">
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                    <td mat-cell *matCellDef="let e">{{ e.type }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                    <td mat-cell *matCellDef="let e">{{ e.date }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="score">
+                    <th mat-header-cell *matHeaderCellDef>Nota</th>
+                    <td mat-cell *matCellDef="let e">{{ e.score }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="feedback">
+                    <th mat-header-cell *matHeaderCellDef>Retroalimentación</th>
+                    <td mat-cell *matCellDef="let e">{{ e.feedback }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="['type','date','score','feedback']"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['type','date','score','feedback']"></tr>
+                </table>
+              </div>
+            </mat-tab>
+
+            <!-- Observaciones -->
+            <mat-tab label="Observaciones">
+              <div class="tab-content">
+                <form [formGroup]="observationForm" (ngSubmit)="saveObservation()" class="inline-form">
+                  <mat-form-field>
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" formControlName="date" />
+                  </mat-form-field>
+                  <mat-form-field class="full">
+                    <mat-label>Observación</mat-label>
+                    <textarea matInput formControlName="observation" rows="3"></textarea>
+                  </mat-form-field>
+                  <button mat-flat-button type="submit" class="full">Registrar observación</button>
+                </form>
+                @for (o of observations(); track o.id) {
+                  <mat-card class="obs-card">
+                    <mat-card-content>
+                      <p class="obs-date">{{ o.date }}</p>
+                      <p>{{ o.observation }}</p>
+                    </mat-card-content>
+                  </mat-card>
+                }
+              </div>
+            </mat-tab>
+
+            <!-- Evaluación de nivel -->
+            <mat-tab label="Fin de nivel">
+              <div class="tab-content">
+                @if (levelEvals().length > 0) {
+                  <mat-card class="level-card">
+                    <mat-card-content>
+                      <p><strong>Resultado:</strong> {{ levelEvals()[0].result === 'APPROVED' ? 'Aprobado' : 'Reprobado' }}</p>
+                      <p><strong>Fecha:</strong> {{ levelEvals()[0].date }}</p>
+                      <p><strong>Comentarios:</strong> {{ levelEvals()[0].comments }}</p>
+                    </mat-card-content>
+                  </mat-card>
+                } @else {
+                  <form [formGroup]="levelForm" (ngSubmit)="saveLevelEval()" class="inline-form">
+                    <mat-form-field>
+                      <mat-label>Fecha</mat-label>
+                      <input matInput type="date" formControlName="date" />
+                    </mat-form-field>
+                    <mat-form-field>
+                      <mat-label>Resultado</mat-label>
+                      <mat-select formControlName="result">
+                        <mat-option value="APPROVED">Aprobado</mat-option>
+                        <mat-option value="FAILED">Reprobado</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="full">
+                      <mat-label>Comentarios</mat-label>
+                      <textarea matInput formControlName="comments" rows="3"></textarea>
+                    </mat-form-field>
+                    <button mat-flat-button type="submit" class="full">Registrar evaluación de nivel</button>
+                  </form>
+                }
+              </div>
+            </mat-tab>
+
+          </mat-tab-group>
+        </div>
+      } @else {
+        <div class="empty-detail">
+          <p>Selecciona un estudiante para ver su registro académico.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

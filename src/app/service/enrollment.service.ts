@@ -7,13 +7,21 @@ import { Enrollment } from '../model/enrollment.model';
 @Injectable({ providedIn: 'root' })
 export class EnrollmentService {
   private http = inject(HttpClient);
-  private api = environment.apiUrl;
+  private api  = environment.apiUrl;
 
   getAll(): Observable<Enrollment[]> {
     return this.http.get<Enrollment[]>(`${this.api}/enrollments`);
   }
 
-  create(payload: { sectionId: number; studentId: number; enrollmentDate: string; status: string }): Observable<Enrollment> {
-    return this.http.post<Enrollment>(`${this.api}/enrollments`, payload);
+  getBySection(sectionId: number): Observable<Enrollment[]> {
+    return this.http.get<Enrollment[]>(`${this.api}/enrollments`, { params: { sectionId } });
+  }
+
+  create(body: { sectionId: number; studentId: number; enrollmentDate?: string; status?: string }): Observable<Enrollment> {
+    return this.http.post<Enrollment>(`${this.api}/enrollments`, body);
+  }
+
+  getByStudent(studentId: number): Observable<Enrollment[]> {
+    return this.http.get<Enrollment[]>(`${this.api}/enrollments`, { params: { studentId } });
   }
 }
