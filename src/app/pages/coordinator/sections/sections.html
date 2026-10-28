@@ -81,8 +81,9 @@
   } @else {
     <div class="cards-grid">
       @for (s of sections(); track s.id) {
-        <mat-card class="section-card">
+        <mat-card class="section-card" [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor" [style.--card-pastel]="(courses().find(c => c.id === s.courseId)?.language) | languageColor">
           <mat-card-header>
+            <span class="flag-circle" [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor"><img [src]="(courses().find(c => c.id === s.courseId)?.language) | languageFlag" alt="" /></span>
             <mat-card-title>{{ s.groupCode }}</mat-card-title>
             <mat-card-subtitle>{{ s.courseName }}</mat-card-subtitle>
           </mat-card-header>

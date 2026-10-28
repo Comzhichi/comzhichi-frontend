@@ -21,3 +21,34 @@
   background-color: var(--color-bg);
   color: var(--color-text);
 }
+
+button, .mat-mdc-button, .mat-mdc-flat-button, .mat-mdc-raised-button, .mat-mdc-icon-button, .mat-mdc-outlined-button {
+  
+}
+
+.flag-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.flag-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 6px;
+  overflow: hidden;
+}
+
+.flag-inline img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

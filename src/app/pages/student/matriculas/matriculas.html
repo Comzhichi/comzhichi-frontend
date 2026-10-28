@@ -35,13 +35,13 @@
           <tbody>
             @for (e of enrolled(); track e.id) {
               <tr>
-                <td>{{ e.courseName }}</td>
+                <td><span class="flag-inline" [style.background-color]="e.courseName | languageColor"><img [src]="e.courseName | languageFlag" alt="" /></span> {{ e.courseName }}</td>
                 <td>{{ e.sectionGroupCode }}</td>
                 <td>{{ enrolledSchedule(e) }}</td>
                 <td>{{ e.enrollmentDate }}</td>
                 <td>
-                  <span class="status-badge" [class.active]="e.status === 'ACTIVE'">{{
-                    statusLabel(e.status)
+                  <span class="status-badge" [class.active]="e.status === 'ACTIVE' || levelResult(e.id) === 'Aprobado'">{{
+                    levelResult(e.id) || statusLabel(e.status)
                   }}</span>
                 </td>
                 <td>{{ e.teacherName ?? '—' }}</td>
@@ -115,7 +115,7 @@
                 ></mat-checkbox>
               </td>
               <td>
-                {{ s.courseName }}
+                <span class="flag-inline" [style.background-color]="s.courseName | languageColor"><img [src]="s.courseName | languageFlag" alt="" /></span> {{ s.courseName }}
                 @if (isConflict(s.id)) {
                   <span class="conflict-badge" [title]="conflictReason(s.id)"
                     >Cruce de horario</span

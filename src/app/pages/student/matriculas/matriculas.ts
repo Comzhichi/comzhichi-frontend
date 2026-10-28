@@ -1,4 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -13,8 +15,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../service/auth.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
 import { SectionService } from '../../../service/section.service';
+import { AcademicService } from '../../../service/academic.service';
 import { Enrollment } from '../../../model/enrollment.model';
 import { Section } from '../../../model/section.model';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
 
 interface ParsedSchedule {
   days: Set<string>;
@@ -89,6 +94,8 @@ function shiftOf(time: string): string {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    LanguageFlagPipe,
+    LanguageColorPipe,
   ],
   templateUrl: './matriculas.html',
   styleUrl: './matriculas.css',
@@ -96,11 +103,13 @@ function shiftOf(time: string): string {
 export class Matriculas implements OnInit {
   private enrollmentService = inject(EnrollmentService);
   private sectionService = inject(SectionService);
+  private academic = inject(AcademicService);
   private auth = inject(AuthService);
   private snackBar = inject(MatSnackBar);
 
   loading = signal(true);
   enrolled = signal<Enrollment[]>([]);
+  levelResults = signal<Record<number, string>>({});
   sections = signal<Section[]>([]);
   error = signal('');
 
@@ -327,10 +336,35 @@ export class Matriculas implements OnInit {
   }
 
   reloadEnrolled(): void {
+    const studentId = this.auth.currentUser()?.id ?? 0;
+    const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
-      next: (data) => this.enrolled.set(data),
+      next: (data) => {
+        const mine = data.filter((e) =>
+          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
+        );
+        this.enrolled.set(mine);
+        this.loadLevelResults(mine);
+      },
       error: () => {},
     });
+  }
+
+  loadLevelResults(list: Enrollment[]): void {
+    if (list.length === 0) { this.levelResults.set({}); return; }
+    forkJoin(list.map((e) =>
+      this.academic.getLevelEvaluations(e.id).pipe(
+        map((levels) => ({ id: e.id, result: levels.length ? (levels[0].result === 'APPROVED' ? 'Aprobado' : 'Reprobado') : '' }))
+      )
+    )).subscribe((results) => {
+      const map: Record<number, string> = {};
+      results.forEach((r) => { if (r.result) map[r.id] = r.result; });
+      this.levelResults.set(map);
+    });
+  }
+
+  levelResult(id: number): string {
+    return this.levelResults()[id] ?? '';
   }
 
   statusLabel(status: string): string {
@@ -360,9 +394,15 @@ export class Matriculas implements OnInit {
       next: (data) => this.sections.set(data),
       error: () => this.sections.set([]),
     });
+    const studentId = this.auth.currentUser()?.id ?? 0;
+    const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
       next: (data) => {
-        this.enrolled.set(data);
+        const mine = data.filter((e) =>
+          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
+        );
+        this.enrolled.set(mine);
+        this.loadLevelResults(mine);
         this.loading.set(false);
       },
       error: () => {

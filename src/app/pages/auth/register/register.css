@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   padding: 56px 48px;
-  background: linear-gradient(135deg, #229C78 0%, #25332F 100%);
+  background: #229C78;
   color: #FAFAFA;
   overflow: hidden;
 }
@@ -111,7 +111,7 @@
   padding: 40px 36px;
   border-radius: 20px;
   background: #FFFFFF;
-  box-shadow: 0 20px 60px rgba(34, 156, 120, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+  
   border: 1px solid #F0F0F0;
 }
 
@@ -156,14 +156,14 @@ mat-form-field mat-icon[matPrefix] {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #229C78 0%, #25332F 100%);
-  box-shadow: 0 8px 20px rgba(34, 156, 120, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: #229C78;
+  
+  transition: transform 0.15s ease;
 }
 
 .submit-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(34, 156, 120, 0.4);
+  
 }
 
 .error {

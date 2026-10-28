@@ -14,6 +14,18 @@ export const TEACHER_ROUTES: Routes = [
         path: 'section/:id',
         loadComponent: () => import('./section-detail/section-detail').then((m) => m.SectionDetail),
       },
+      {
+        path: 'horario',
+        loadComponent: () => import('./horario/horario').then((m) => m.Horario),
+      },
+      {
+        path: 'evaluaciones',
+        loadComponent: () => import('./evaluaciones/evaluaciones').then((m) => m.Evaluaciones),
+      },
+      {
+        path: 'progreso',
+        loadComponent: () => import('./progreso/progreso').then((m) => m.Progreso),
+      },
     ],
   },
 ];

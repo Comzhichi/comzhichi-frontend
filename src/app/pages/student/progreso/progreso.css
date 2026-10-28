@@ -1,0 +1,23 @@
+:host { display: block; }
+
+.dashboard { max-width: 960px; margin: 0 auto; position: relative; }
+
+.dash-header {
+  margin-bottom: 28px; padding: 24px 28px; background: #f3e5f5;
+  border: 1px solid #e4e4e7; border-radius: 20px;
+  position: relative; overflow: hidden;
+}
+.dash-title { font-size: 26px; font-weight: 700; color: #45234f; margin-bottom: 4px; }
+.dash-subtitle { font-size: 15px; color: #45234f; }
+
+.center { display: flex; justify-content: center; padding: 48px 0; }
+
+.empty {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 48px 24px; background: #ffffff; border: 1px solid #e4e4e7;
+  border-radius: 20px; color: #687078; text-align: center;
+}
+.empty-icon { font-size: 48px; width: 48px; height: 48px; color: #8e24aa; }
+
+.table-card { border-radius: 16px; border: 1px solid #e4e4e7; overflow: hidden; }
+.record-table { width: 100%; }

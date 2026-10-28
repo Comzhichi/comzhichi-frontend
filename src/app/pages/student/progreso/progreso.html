@@ -1,0 +1,40 @@
+<div class="dashboard">
+  <header class="dash-header">
+    <div>
+      <h1 class="dash-title">Progreso</h1>
+      <p class="dash-subtitle">Tu progreso académico y resultados de fin de nivel.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (rows().length === 0) {
+    <div class="empty">
+      <mat-icon class="empty-icon">trending_up</mat-icon>
+      <p>No hay datos de progreso.</p>
+    </div>
+  } @else {
+    <mat-card class="table-card">
+      <table mat-table [dataSource]="rows()" class="record-table">
+        <ng-container matColumnDef="course">
+          <th mat-header-cell *matHeaderCellDef>Curso</th>
+          <td mat-cell *matCellDef="let r">{{ r.course }}</td>
+        </ng-container>
+        <ng-container matColumnDef="section">
+          <th mat-header-cell *matHeaderCellDef>Sección</th>
+          <td mat-cell *matCellDef="let r">{{ r.section }}</td>
+        </ng-container>
+        <ng-container matColumnDef="average">
+          <th mat-header-cell *matHeaderCellDef>Promedio</th>
+          <td mat-cell *matCellDef="let r">{{ r.average ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="level">
+          <th mat-header-cell *matHeaderCellDef>Fin de nivel</th>
+          <td mat-cell *matCellDef="let r">{{ r.levelResult }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['course','section','average','level']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['course','section','average','level']"></tr>
+      </table>
+    </mat-card>
+  }
+</div>

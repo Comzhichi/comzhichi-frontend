@@ -1,11 +1,15 @@
-<div class="home-wrap">
-  <div class="home-header">
-    <h1>Panel de Coordinación</h1>
-    <p>Bienvenido, {{ userName }}</p>
-  </div>
+<div class="dashboard">
+  <header class="dash-header">
+    <div>
+      <h1 class="dash-title">Bienvenido, {{ userName }}</h1>
+      <p class="dash-subtitle">Aquí puedes ver las secciones activas y las vacantes disponibles.</p>
+    </div>
+  </header>
 
   @if (loading()) {
-    <div class="center"><mat-spinner diameter="40" /></div>
+    <div class="center">
+      <mat-spinner diameter="40" />
+    </div>
   } @else {
     <div class="stats-grid">
       <mat-card class="stat-card">
@@ -29,20 +33,37 @@
     </div>
 
     <h2 class="section-title">Secciones</h2>
-    <div class="cards-grid">
-      @for (s of sections(); track s.id) {
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>{{ s.courseName }}</mat-card-title>
-            <mat-card-subtitle>{{ s.groupCode }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Aula:</strong> {{ s.classroom }}</p>
-            <p><strong>Horario:</strong> {{ s.startTime }} – {{ s.endTime }}</p>
-            <p><strong>Vacantes:</strong> {{ s.availableVacancies }} / {{ s.totalVacancies }}</p>
-          </mat-card-content>
-        </mat-card>
-      }
-    </div>
+    @if (sections().length === 0) {
+      <div class="empty">
+        <mat-icon class="empty-icon">school</mat-icon>
+        <p>No hay secciones registradas.</p>
+      </div>
+    } @else {
+      <div class="cards-grid">
+        @for (s of sections(); track s.id) {
+          <mat-card class="section-card" [style.background-color]="s.courseName | languageColor" [style.--card-pastel]="s.courseName | languageColor">
+            <span class="flag-circle" [style.background-color]="s.courseName | languageColor"><img [src]="s.courseName | languageFlag" alt="" /></span>
+            <mat-card-header>
+              <mat-card-title>{{ s.courseName }}</mat-card-title>
+              <mat-card-subtitle>{{ s.groupCode }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="section-meta">
+                <mat-icon>meeting_room</mat-icon>
+                <span>{{ s.classroom }}</span>
+              </p>
+              <p class="section-meta">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ s.startTime }} – {{ s.endTime }}</span>
+              </p>
+              <p class="section-meta">
+                <mat-icon>group</mat-icon>
+                <span>{{ s.availableVacancies }} / {{ s.totalVacancies }} vacantes</span>
+              </p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
   }
 </div>

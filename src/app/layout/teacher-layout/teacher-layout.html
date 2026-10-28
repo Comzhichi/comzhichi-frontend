@@ -1,19 +1,75 @@
-<mat-sidenav-container class="container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <h2 class="title">Panel docente</h2>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/teacher" routerLinkActive #p="routerLinkActive" [activated]="p.isActive">Inicio</a>
-      <a mat-list-item>Mis cursos</a>
-      <a mat-list-item>Evaluaciones</a>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <mat-toolbar>
-      <span class="spacer"></span>
+<div class="page">
+  <header class="header">
+    <div class="header-left">
+      <img src="/comzhichi-logo.png" alt="Comzhichi" class="logo-img" />
+      <a class="brand-name" routerLink="/teacher">Comzhichi</a>
+    </div>
+
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a class="nav-link" routerLink="/teacher">Secciones</a>
+      <a class="nav-link" routerLink="/teacher/evaluaciones">Evaluaciones</a>
+      <a class="nav-link" routerLink="/teacher/horario">Horario</a>
+      <a class="nav-link" routerLink="/teacher/progreso">Progreso</a>
+    </nav>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-label>Buscar secciones por nombre</mat-label>
+      <input matInput type="search" />
+    </mat-form-field>
+
+    <div class="header-right">
+      <div class="student-info">
+        <span class="student-name">{{ userName }}</span>
+        <span class="student-email">{{ userEmail }}</span>
+      </div>
+      <div class="avatar" aria-label="Avatar del docente">{{ initials }}</div>
+      <a class="onboarding-link" routerLink="/teacher">Panel</a>
       <button matButton (click)="logout()">Salir</button>
-    </mat-toolbar>
-    <main class="content">
+    </div>
+
+    <button
+      class="menu-btn"
+      type="button"
+      (click)="toggleSidebar()"
+      aria-label="Abrir menú lateral"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar" [class.open]="sidebarOpen()" (click)="closeSidebar()">
+      <nav class="sidebar-nav" (click)="$event.stopPropagation()" aria-label="Menú lateral">
+        <a class="side-item" routerLink="/teacher" (click)="closeSidebar()">
+          <mat-icon>dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>settings</mat-icon>
+          <span>Ajustes</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>help_outline</mat-icon>
+          <span>Centro de ayuda</span>
+        </a>
+        <a class="side-item" href="#" (click)="$event.preventDefault()">
+          <mat-icon>smart_toy</mat-icon>
+          <span>Agente IA</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
       <router-outlet />
     </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-copy">© 2026 Comzhichi. Todos los derechos reservados</span>
+    <nav class="footer-links" aria-label="Enlaces institucionales">
+      <a href="#" (click)="$event.preventDefault()">Seguridad</a>
+      <a href="#" (click)="$event.preventDefault()">Soporte técnico</a>
+      <a href="#" (click)="$event.preventDefault()">Condiciones</a>
+    </nav>
+  </footer>
+</div>

@@ -1,13 +1,16 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
 import { SectionService } from '../../../service/section.service';
 import { AuthService } from '../../../service/auth.service';
 import { Section } from '../../../model/section.model';
 
 @Component({
   selector: 'app-coordinator-home',
-  imports: [MatCardModule, MatProgressSpinnerModule],
+  imports: [MatCardModule, MatIconModule, MatProgressSpinnerModule, LanguageFlagPipe, LanguageColorPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

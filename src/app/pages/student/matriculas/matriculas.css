@@ -32,8 +32,8 @@
 .card {
   border-radius: 20px;
   border: 1px solid #e4e4e7;
-  box-shadow: 0 4px 16px rgba(69, 35, 79, 0.05);
-  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%);
+  
+  background: #ffffff;
   padding: 24px 28px;
 }
 
@@ -167,12 +167,11 @@
   height: 42px;
   font-weight: 700;
   border-radius: 12px;
-  background: linear-gradient(135deg, #d9912f, #d18427);
+  background: #d9912f;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(209, 132, 39, 0.35);
+  
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease,
     opacity 0.2s ease;
   display: flex;
   align-items: center;
@@ -182,13 +181,13 @@
 
 .register-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(209, 132, 39, 0.45);
+  
 }
 
 .register-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
+  
 }
 
 @media (max-width: 900px) {

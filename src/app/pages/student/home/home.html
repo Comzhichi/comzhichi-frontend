@@ -1,6 +1,6 @@
 <div class="dashboard">
   <header class="dash-header">
-    <div>
+    <div class="dash-text">
       <h1 class="dash-title">Bienvenido, {{ userName }}</h1>
       <p class="dash-subtitle">Aquí puedes ver tus matrículas activas.</p>
     </div>
@@ -18,7 +18,8 @@
   } @else {
     <div class="cards-grid">
       @for (e of enrollments(); track e.id) {
-        <mat-card class="enrollment-card">
+        <mat-card class="enrollment-card" [style.background-color]="e.courseName | languageColor" [style.--card-pastel]="e.courseName | languageColor">
+          <span class="flag-circle" [style.background-color]="e.courseName | languageColor"><img [src]="e.courseName | languageFlag" alt="" /></span>
           <mat-card-header>
             <mat-card-title>{{ e.courseName }}</mat-card-title>
             <mat-card-subtitle>{{ e.sectionGroupCode }}</mat-card-subtitle>

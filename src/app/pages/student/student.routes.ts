@@ -21,6 +21,10 @@ export const STUDENT_ROUTES: Routes = [
         path: 'matriculas',
         loadComponent: () => import('./matriculas/matriculas').then((m) => m.Matriculas),
       },
+      {
+        path: 'progreso',
+        loadComponent: () => import('./progreso/progreso').then((m) => m.Progreso),
+      },
     ],
   },
 ];

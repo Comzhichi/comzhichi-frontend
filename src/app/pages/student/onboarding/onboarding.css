@@ -8,11 +8,9 @@
 }
 
 .card {
-  background: linear-gradient(180deg, #ffffff 0%, #fefcff 100%);
+  background: #ffffff;
   border-radius: 24px;
-  box-shadow:
-    0 10px 40px rgba(69, 35, 79, 0.08),
-    0 2px 8px rgba(69, 35, 79, 0.04);
+  
   padding: 36px 44px 40px;
   border: 1px solid rgba(228, 228, 231, 0.8);
   position: relative;
@@ -27,7 +25,7 @@
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(142, 36, 170, 0.08), transparent 70%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -45,7 +43,7 @@
 .progress-bar {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #9c27b0, #8e24aa, #6a1b9a);
+  background: #9c27b0;
   transition: width 0.3s ease;
 }
 
@@ -109,11 +107,10 @@
   padding: 16px 18px;
   border: 1.5px solid #e4e4e7;
   border-radius: 14px;
-  background: linear-gradient(180deg, #ffffff 0%, #fdfaff 100%);
+  background: #ffffff;
   cursor: pointer;
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease,
     transform 0.2s ease,
     background-color 0.2s ease;
   user-select: none;
@@ -125,7 +122,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 0% 0%, rgba(142, 36, 170, 0.06), transparent 60%);
+  background: transparent;
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
@@ -133,7 +130,7 @@
 
 .answer-card:hover {
   border-color: #8e24aa;
-  box-shadow: 0 6px 20px rgba(142, 36, 170, 0.12);
+  
   transform: translateY(-2px);
 }
 
@@ -143,8 +140,8 @@
 
 .answer-card.selected {
   border-color: #8e24aa;
-  background: linear-gradient(135deg, #f5eaf8 0%, #fceeff 100%);
-  box-shadow: 0 6px 20px rgba(142, 36, 170, 0.16);
+  background: #f5eaf8;
+  
   transform: translateY(-2px);
 }
 
@@ -194,25 +191,24 @@
   padding: 16px 18px;
   border: 1.5px solid #e4e4e7;
   border-radius: 14px;
-  background: linear-gradient(180deg, #ffffff 0%, #fdfaff 100%);
+  background: #ffffff;
   cursor: pointer;
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease,
     transform 0.2s ease,
     background-color 0.2s ease;
 }
 
 .course-card:hover {
   border-color: #8e24aa;
-  box-shadow: 0 4px 16px rgba(142, 36, 170, 0.1);
+  
   transform: translateY(-1px);
 }
 
 .course-card.selected {
   border-color: #8e24aa;
-  background: linear-gradient(135deg, #f5eaf8 0%, #fceeff 100%);
-  box-shadow: 0 4px 16px rgba(142, 36, 170, 0.14);
+  background: #f5eaf8;
+  
 }
 
 .course-radio {
@@ -289,24 +285,23 @@
   height: 44px;
   font-weight: 600;
   border-radius: 12px;
-  background: linear-gradient(135deg, #d4943a, #c77e2b);
+  background: #d4943a;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(199, 126, 43, 0.35);
+  
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease,
     opacity 0.2s ease;
 }
 
 .continue-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(199, 126, 43, 0.45);
+  
 }
 
 .continue-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
+  
 }
 
 .skip-btn {
@@ -335,12 +330,12 @@
   height: 72px;
   margin: 0 auto 16px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f5eaf8, #fceeff);
+  background: #f5eaf8;
   color: #8e24aa;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 20px rgba(142, 36, 170, 0.15);
+  
 }
 
 .thanks-icon mat-icon {

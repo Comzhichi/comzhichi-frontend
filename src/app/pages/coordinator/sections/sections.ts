@@ -14,6 +14,8 @@ import { CourseService } from '../../../service/course.service';
 import { TeacherService } from '../../../service/teacher.service';
 import { Section } from '../../../model/section.model';
 import { Course } from '../../../model/course.model';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
 import { Teacher } from '../../../model/teacher.model';
 
 const DAYS = [
@@ -30,7 +32,7 @@ const DAYS = [
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatSelectModule,
-    MatIconModule, MatProgressSpinnerModule, MatCheckboxModule,
+    MatIconModule, MatProgressSpinnerModule, MatCheckboxModule, LanguageFlagPipe, LanguageColorPipe,
   ],
   templateUrl: './sections.html',
   styleUrl: './sections.css',

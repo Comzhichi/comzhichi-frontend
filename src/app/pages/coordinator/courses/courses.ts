@@ -11,13 +11,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CourseService } from '../../../service/course.service';
 import { AuthService } from '../../../service/auth.service';
 import { Course } from '../../../model/course.model';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
 
 @Component({
   selector: 'app-courses',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatSelectModule,
-    MatIconModule, MatProgressSpinnerModule,
+    MatIconModule, MatProgressSpinnerModule, LanguageFlagPipe, LanguageColorPipe,
   ],
   templateUrl: './courses.html',
   styleUrl: './courses.css',

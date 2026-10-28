@@ -58,8 +58,9 @@
   } @else {
     <div class="cards-grid">
       @for (c of courses(); track c.id) {
-        <mat-card class="course-card">
+        <mat-card class="course-card" [style.background-color]="c.language | languageColor" [style.--card-pastel]="c.language | languageColor">
           <mat-card-header>
+            <span class="flag-circle" [style.background-color]="c.language | languageColor"><img [src]="c.language | languageFlag" alt="" /></span>
             <mat-card-title>{{ c.name }}</mat-card-title>
             <mat-card-subtitle>{{ c.language }} — {{ c.level }}</mat-card-subtitle>
           </mat-card-header>

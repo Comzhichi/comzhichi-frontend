@@ -2,6 +2,9 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SectionService } from '../../../service/section.service';
 import { AuthService } from '../../../service/auth.service';
@@ -9,7 +12,7 @@ import { Section } from '../../../model/section.model';
 
 @Component({
   selector: 'app-teacher-home',
-  imports: [MatCardModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, LanguageFlagPipe, LanguageColorPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
