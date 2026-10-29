@@ -12,11 +12,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SectionService } from '../../../service/section.service';
 import { CourseService } from '../../../service/course.service';
 import { TeacherService } from '../../../service/teacher.service';
+import { EnrollmentService } from '../../../service/enrollment.service';
 import { Section } from '../../../model/section.model';
 import { Course } from '../../../model/course.model';
+import { Teacher } from '../../../model/teacher.model';
+import { Enrollment } from '../../../model/enrollment.model';
 import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { LanguageColorPipe } from '../../../util/language-color.pipe';
-import { Teacher } from '../../../model/teacher.model';
 
 const DAYS = [
   { value: 'MONDAY',    label: 'Lunes' },
@@ -32,15 +34,17 @@ const DAYS = [
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatSelectModule,
-    MatIconModule, MatProgressSpinnerModule, MatCheckboxModule, LanguageFlagPipe, LanguageColorPipe,
+    MatIconModule, MatProgressSpinnerModule, MatCheckboxModule,
+    LanguageFlagPipe, LanguageColorPipe,
   ],
   templateUrl: './sections.html',
   styleUrl: './sections.css',
 })
 export class Sections implements OnInit {
-  private sectionService = inject(SectionService);
-  private courseService  = inject(CourseService);
-  private teacherService = inject(TeacherService);
+  private sectionService    = inject(SectionService);
+  private courseService     = inject(CourseService);
+  private teacherService    = inject(TeacherService);
+  private enrollmentService = inject(EnrollmentService);
   private fb    = inject(FormBuilder);
   private snack = inject(MatSnackBar);
 
@@ -52,6 +56,15 @@ export class Sections implements OnInit {
   showForm  = signal(false);
   readonly days = DAYS;
   selectedDays = signal<string[]>([]);
+
+  // Panel de matrículas
+  selectedSection    = signal<Section | null>(null);
+  enrollments        = signal<Enrollment[]>([]);
+  loadingEnrollments = signal(false);
+
+  // Transferencia
+  transferingId       = signal<number | null>(null);
+  sectionsForTransfer = signal<Section[]>([]);
 
   form = this.fb.nonNullable.group({
     groupCode:       ['', Validators.required],
@@ -144,6 +157,72 @@ export class Sections implements OnInit {
     this.sectionService.delete(s.id).subscribe({
       next: () => this.sections.update(list => list.filter(x => x.id !== s.id)),
       error: (e) => this.snack.open(e.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
+    });
+  }
+
+  // ── Panel de matrículas ──
+  viewEnrollments(s: Section) {
+    this.selectedSection.set(s);
+    this.loadingEnrollments.set(true);
+    this.closeTransfer();
+    this.enrollmentService.getBySection(s.id).subscribe(data => {
+      this.enrollments.set(data.filter(e => e.status === 'ACTIVE'));
+      this.loadingEnrollments.set(false);
+    });
+  }
+
+  closeEnrollments() {
+    this.selectedSection.set(null);
+    this.enrollments.set([]);
+    this.closeTransfer();
+  }
+
+  dropEnrollment(e: Enrollment) {
+    if (!confirm(`¿Dar de baja a ${e.studentFullName}?`)) return;
+    this.enrollmentService.drop(e.id).subscribe({
+      next: () => {
+        this.enrollments.update(list => list.filter(x => x.id !== e.id));
+        this.sectionService.getAll().subscribe(d => this.sections.set(d));
+        this.snack.open('Baja registrada correctamente', 'Cerrar', { duration: 3000 });
+      },
+      error: (err) => this.snack.open(err.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
+    });
+  }
+
+  // ── Transferencia ──
+  openTransfer(e: Enrollment) {
+    this.transferingId.set(e.id);
+    const currentSection = this.selectedSection()!;
+    const available = this.sections().filter(s =>
+      s.courseId === currentSection.courseId
+      && s.id !== currentSection.id
+      && s.availableVacancies > 0
+    );
+    this.sectionsForTransfer.set(available);
+  }
+
+  closeTransfer() {
+    this.transferingId.set(null);
+    this.sectionsForTransfer.set([]);
+  }
+
+  confirmTransfer(newSectionId: number) {
+    const enrollmentId = this.transferingId();
+    if (!enrollmentId) return;
+
+    this.enrollmentService.transfer(enrollmentId, newSectionId).subscribe({
+      next: () => {
+        this.snack.open('Estudiante transferido correctamente', 'Cerrar', { duration: 3000 });
+        this.closeTransfer();
+        const section = this.selectedSection();
+        if (section) {
+          this.enrollmentService.getBySection(section.id).subscribe(data => {
+            this.enrollments.set(data.filter(e => e.status === 'ACTIVE'));
+          });
+        }
+        this.sectionService.getAll().subscribe(d => this.sections.set(d));
+      },
+      error: (err) => this.snack.open(err.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
     });
   }
 

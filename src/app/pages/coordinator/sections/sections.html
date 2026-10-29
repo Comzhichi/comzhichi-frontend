@@ -81,9 +81,14 @@
   } @else {
     <div class="cards-grid">
       @for (s of sections(); track s.id) {
-        <mat-card class="section-card" [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor" [style.--card-pastel]="(courses().find(c => c.id === s.courseId)?.language) | languageColor">
+        <mat-card class="section-card"
+          [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor"
+          [style.--card-pastel]="(courses().find(c => c.id === s.courseId)?.language) | languageColor">
           <mat-card-header>
-            <span class="flag-circle" [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor"><img [src]="(courses().find(c => c.id === s.courseId)?.language) | languageFlag" alt="" /></span>
+            <span class="flag-circle"
+              [style.background-color]="(courses().find(c => c.id === s.courseId)?.language) | languageColor">
+              <img [src]="(courses().find(c => c.id === s.courseId)?.language) | languageFlag" alt="" />
+            </span>
             <mat-card-title>{{ s.groupCode }}</mat-card-title>
             <mat-card-subtitle>{{ s.courseName }}</mat-card-subtitle>
           </mat-card-header>
@@ -94,10 +99,75 @@
             <p><strong>Vacantes:</strong> {{ s.availableVacancies }} / {{ s.totalVacancies }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-icon-button (click)="edit(s)"><mat-icon>edit</mat-icon></button>
-            <button mat-icon-button color="warn" (click)="delete(s)"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button (click)="viewEnrollments(s)">
+              <mat-icon>group</mat-icon>
+            </button>
+            <button mat-icon-button (click)="edit(s)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="delete(s)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </mat-card-actions>
         </mat-card>
+      }
+    </div>
+  }
+
+  @if (selectedSection()) {
+    <div class="enrollments-panel">
+      <div class="enrollments-header">
+        <h2>Estudiantes — {{ selectedSection()!.groupCode }}</h2>
+        <button mat-icon-button (click)="closeEnrollments()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      @if (loadingEnrollments()) {
+        <div class="center"><mat-spinner diameter="32" /></div>
+      } @else if (enrollments().length === 0) {
+        <p class="empty-msg">No hay estudiantes activos en esta sección.</p>
+      } @else {
+        @for (e of enrollments(); track e.id) {
+          <div class="enrollment-row">
+            <span class="student-name">{{ e.studentFullName }}</span>
+            <span class="email">{{ e.studentEmail }}</span>
+            <button mat-stroked-button (click)="openTransfer(e)"
+                    [disabled]="transferingId() === e.id">
+              <mat-icon>swap_horiz</mat-icon> Transferir
+            </button>
+            <button mat-stroked-button color="warn" (click)="dropEnrollment(e)">
+              <mat-icon>person_remove</mat-icon> Dar de baja
+            </button>
+          </div>
+
+          @if (transferingId() === e.id) {
+            <div class="transfer-panel">
+              @if (sectionsForTransfer().length === 0) {
+                <p class="empty-msg">No hay otras secciones disponibles para este curso.</p>
+                <button mat-button (click)="closeTransfer()">Cancelar</button>
+              } @else {
+                <p class="transfer-label">Selecciona la sección destino:</p>
+                <div class="transfer-options">
+                  @for (s of sectionsForTransfer(); track s.id) {
+                    <div class="transfer-option">
+                      <span>
+                        <strong>{{ s.groupCode }}</strong> —
+                        {{ formatDays(s.dayOfWeek) }}
+                        {{ s.startTime }}–{{ s.endTime }}
+                      </span>
+                      <span class="vacantes">{{ s.availableVacancies }} vacantes</span>
+                      <button mat-flat-button (click)="confirmTransfer(s.id)">
+                        Confirmar
+                      </button>
+                    </div>
+                  }
+                </div>
+                <button mat-button (click)="closeTransfer()">Cancelar</button>
+              }
+            </div>
+          }
+        }
       }
     </div>
   }
