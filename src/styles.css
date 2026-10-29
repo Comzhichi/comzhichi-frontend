@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
+
+/* El logo se mantiene circular */
+.logo-img { border-radius: 50% !important; }
 
 :root {
   --color-primary:     #8C239C;
@@ -11,6 +14,20 @@
   --color-extra2:      #25332F;
   --color-text:        #212121;
   --color-bg:          #FAFAFA;
+
+  /* Sin redondeado en ningún elemento */
+  --mat-sys-corner-extra-large: 0;
+  --mat-sys-corner-extra-large-top: 0;
+  --mat-sys-corner-extra-small: 0;
+  --mat-sys-corner-extra-small-top: 0;
+  --mat-sys-corner-full: 0;
+  --mat-sys-corner-large: 0;
+  --mat-sys-corner-large-end: 0;
+  --mat-sys-corner-large-start: 0;
+  --mat-sys-corner-large-top: 0;
+  --mat-sys-corner-medium: 0;
+  --mat-sys-corner-none: 0;
+  --mat-sys-corner-small: 0;
 
   --sp-1: 8px;
   --sp-2: 16px;
@@ -30,7 +47,7 @@ button, .mat-mdc-button, .mat-mdc-flat-button, .mat-mdc-raised-button, .mat-mdc-
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 0;
   display: block;
 }
 
@@ -40,7 +57,7 @@ button, .mat-mdc-button, .mat-mdc-flat-button, .mat-mdc-raised-button, .mat-mdc-
   justify-content: center;
   width: 20px;
   height: 20px;
-  border-radius: 50%;
+  border-radius: 0;
   vertical-align: middle;
   margin-right: 6px;
   overflow: hidden;

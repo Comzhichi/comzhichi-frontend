@@ -40,7 +40,10 @@
                 <td>{{ enrolledSchedule(e) }}</td>
                 <td>{{ e.enrollmentDate }}</td>
                 <td>
-                  <span class="status-badge" [class.active]="e.status === 'ACTIVE' || levelResult(e.id) === 'Aprobado'">{{
+                  <span class="status-badge"
+                    [class.active]="e.status === 'ACTIVE' && levelResult(e.id) !== 'Aprobado'"
+                    [class.approved]="e.status === 'APPROVED' || levelResult(e.id) === 'Aprobado'"
+                    >{{
                     levelResult(e.id) || statusLabel(e.status)
                   }}</span>
                 </td>
@@ -62,7 +65,7 @@
 
     <div class="filters-row">
       <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Ingrese nombre del curso, sección o docente que lo dicta</mat-label>
+        <mat-label>Buscar por curso, sección o docente</mat-label>
         <input
           matInput
           type="text"
@@ -73,18 +76,32 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Elija uno o varios filtros</mat-label>
-        <mat-select
-          multiple
-          [value]="selectedFilters()"
-          (selectionChange)="selectedFilters.set($event.value)"
-        >
-          <mat-option value="Básico">Básico</mat-option>
-          <mat-option value="Intermedio">Intermedio</mat-option>
-          <mat-option value="Avanzado">Avanzado</mat-option>
-          <mat-option value="Mañana">Mañana</mat-option>
-          <mat-option value="Tarde">Tarde</mat-option>
-          <mat-option value="Noche">Noche</mat-option>
+        <mat-label>Idioma</mat-label>
+        <mat-select [value]="selectedLanguage()" (selectionChange)="selectedLanguage.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lang of languages(); track lang) {
+            <mat-option [value]="lang">{{ lang }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Nivel</mat-label>
+        <mat-select [value]="selectedLevel()" (selectionChange)="selectedLevel.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lvl of levels(); track lvl) {
+            <mat-option [value]="lvl">{{ lvl }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Horario</mat-label>
+        <mat-select [value]="selectedSchedule()" (selectionChange)="selectedSchedule.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (sch of scheduleOptions; track sch) {
+            <mat-option [value]="sch">{{ sch }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>

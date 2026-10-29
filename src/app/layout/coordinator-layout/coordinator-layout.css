@@ -73,7 +73,7 @@
 .logo-img {
   width: 46px;
   height: 46px;
-  border-radius: 50%;
+  border-radius: 0;
   object-fit: cover;
   background-color: var(--cz-white);
   
@@ -100,7 +100,7 @@
   font-size: 14px;
   font-weight: 500;
   padding: 8px 14px;
-  border-radius: 10px;
+  border-radius: 0;
   transition:
     background-color 0.2s ease,
     transform 0.2s ease,
@@ -129,7 +129,7 @@
 .search .mdc-text-field--outlined,
 .search .mat-mdc-text-field-wrapper {
   background-color: rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
+  border-radius: 0;
 }
 
 .header-right {
@@ -162,7 +162,7 @@
 .avatar {
   width: 42px;
   height: 42px;
-  border-radius: 50%;
+  border-radius: 0;
   background: #fceeff;
   color: var(--cz-purple);
   display: flex;
@@ -180,7 +180,7 @@
   text-decoration: none;
   font-weight: 500;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   transition:
     background-color 0.2s ease,
     transform 0.2s ease;
@@ -202,7 +202,7 @@
   color: var(--cz-white);
   cursor: pointer;
   padding: 8px;
-  border-radius: 10px;
+  border-radius: 0;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
@@ -243,7 +243,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: 0;
   color: var(--cz-text);
   text-decoration: none;
   font-size: 14px;
@@ -335,7 +335,7 @@
     color 0.2s ease,
     background-color 0.2s ease;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 .footer-links a:hover,

@@ -72,7 +72,10 @@ export class SectionDetail implements OnInit {
   ngOnInit() {
     this.sectionId = Number(this.route.snapshot.paramMap.get('id'));
     this.enrollmentService.getBySection(this.sectionId).subscribe({
-      next: (data) => { this.enrollments.set(data); this.loading.set(false); },
+      next: (data) => {
+        this.enrollments.set(data.filter((e) => e.sectionId === this.sectionId));
+        this.loading.set(false);
+      },
       error: () => this.loading.set(false),
     });
   }

@@ -1,0 +1,91 @@
+<div class="horarios-wrap">
+  <mat-card class="card">
+    <div class="card-header">
+      <h2 class="card-title">Consultar horarios disponibles</h2>
+    </div>
+
+    @if (error()) {
+      <div class="alert error">{{ error() }}</div>
+    }
+
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar por curso, sección o docente</mat-label>
+        <input matInput type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Idioma</mat-label>
+        <mat-select [value]="selectedLanguage()" (selectionChange)="selectedLanguage.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lang of languages(); track lang) {
+            <mat-option [value]="lang">{{ lang }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Nivel</mat-label>
+        <mat-select [value]="selectedLevel()" (selectionChange)="selectedLevel.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lvl of levels(); track lvl) {
+            <mat-option [value]="lvl">{{ lvl }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Horario</mat-label>
+        <mat-select [value]="selectedSchedule()" (selectionChange)="selectedSchedule.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (sch of scheduleOptions(); track sch) {
+            <mat-option [value]="sch">{{ sch }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (loading()) {
+      <div class="center"><mat-spinner diameter="36" /></div>
+    } @else if (filteredSections().length === 0) {
+      <p class="empty-msg">No se encontraron grupos disponibles.</p>
+    } @else {
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Idioma</th>
+              <th>Nivel</th>
+              <th>Curso</th>
+              <th>Sección</th>
+              <th>Horario</th>
+              <th>Vacantes disponibles</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of filteredSections(); track s.id) {
+              <tr>
+                <td>
+                  <span class="flag-inline" [style.background-color]="languageOf(s) | languageColor">
+                    <img [src]="languageOf(s) | languageFlag" alt="" />
+                  </span>
+                  {{ languageOf(s) }}
+                </td>
+                <td>{{ levelOf(s) }}</td>
+                <td>{{ s.courseName }}</td>
+                <td>{{ s.groupCode }}</td>
+                <td>{{ scheduleText(s) }}</td>
+                <td>
+                  <span class="vacancy" [class.none]="s.availableVacancies <= 0">
+                    {{ s.availableVacancies }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card>
+</div>

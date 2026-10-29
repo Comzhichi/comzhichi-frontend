@@ -15,9 +15,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../service/auth.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
 import { SectionService } from '../../../service/section.service';
+import { CourseService } from '../../../service/course.service';
 import { AcademicService } from '../../../service/academic.service';
 import { Enrollment } from '../../../model/enrollment.model';
 import { Section } from '../../../model/section.model';
+import { Course } from '../../../model/course.model';
 import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { LanguageColorPipe } from '../../../util/language-color.pipe';
 
@@ -103,6 +105,7 @@ function shiftOf(time: string): string {
 export class Matriculas implements OnInit {
   private enrollmentService = inject(EnrollmentService);
   private sectionService = inject(SectionService);
+  private courseService = inject(CourseService);
   private academic = inject(AcademicService);
   private auth = inject(AuthService);
   private snackBar = inject(MatSnackBar);
@@ -111,10 +114,13 @@ export class Matriculas implements OnInit {
   enrolled = signal<Enrollment[]>([]);
   levelResults = signal<Record<number, string>>({});
   sections = signal<Section[]>([]);
+  courses = signal<Course[]>([]);
   error = signal('');
 
   searchQuery = signal('');
-  selectedFilters = signal<string[]>([]);
+  selectedLanguage = signal<string>('');
+  selectedLevel = signal<string>('');
+  selectedSchedule = signal<string>('');
   selectedIds = signal<Set<number>>(new Set());
   registering = signal(false);
   message = signal('');
@@ -155,33 +161,77 @@ export class Matriculas implements OnInit {
       .filter((r): r is ParsedSchedule => r !== null);
   });
 
-  enrolledCourseNames = computed(() => {
-    const names = new Set<string>();
+  enrolledCourseKeys = computed(() => {
+    const exact = new Set<string>();
+    const byName = new Set<string>();
     for (const e of this.enrolled()) {
-      if (e.status === 'ACTIVE' || e.status === 'APPROVED') {
-        names.add((e.courseName || '').trim().toLowerCase());
+      if (e.status !== 'ACTIVE' && e.status !== 'APPROVED') continue;
+      const name = (e.courseName || '').trim().toLowerCase();
+      const sec = this.findSectionForEnrollment(e);
+      const level = (sec?.courseLevel || '').trim().toLowerCase();
+      if (level) {
+        exact.add(name + '|' + level);
+      } else {
+        byName.add(name);
       }
     }
-    return names;
+    return { exact, byName };
   });
+
+  courseMap = computed(() => {
+    const map = new Map<number, Course>();
+    for (const c of this.courses()) map.set(c.id, c);
+    return map;
+  });
+
+  languageOfSection(s: Section): string {
+    return this.courseMap().get(s.courseId)?.language || s.language || '';
+  }
+
+  languages = computed(() => {
+    const set = new Set<string>();
+    for (const s of this.sections()) {
+      const lang = this.languageOfSection(s).trim();
+      if (lang) set.add(lang);
+    }
+    return [...set].sort();
+  });
+
+  levels = computed(() => {
+    const set = new Set<string>();
+    for (const s of this.sections()) {
+      const level = (s.courseLevel || '').trim();
+      if (level) set.add(level);
+    }
+    return [...set].sort();
+  });
+
+  scheduleOptions = ['Mañana', 'Tarde', 'Noche'];
 
   filteredSections = computed(() => {
     const q = this.searchQuery().trim().toLowerCase();
-    const filters = this.selectedFilters();
-    const enrolled = this.enrolledCourseNames();
+    const langFilter = this.selectedLanguage().trim().toLowerCase();
+    const levelFilter = this.selectedLevel().trim().toLowerCase();
+    const scheduleFilter = this.selectedSchedule().trim().toLowerCase();
+    const enrolled = this.enrolledCourseKeys();
     return this.sections().filter((s) => {
-      if (enrolled.has((s.courseName || '').trim().toLowerCase())) return false;
+      const name = (s.courseName || '').trim().toLowerCase();
+      const level = (s.courseLevel || '').trim().toLowerCase();
+      if (enrolled.byName.has(name)) return false;
+      if (enrolled.exact.has(name + '|' + level)) return false;
+      const sLang = this.languageOfSection(s).trim().toLowerCase();
+      if (langFilter && sLang !== langFilter) return false;
       const teacher = s.teacherName ?? s.teacherSpecialty;
       const matchQ =
         !q ||
         s.courseName.toLowerCase().includes(q) ||
         s.groupCode.toLowerCase().includes(q) ||
         teacher.toLowerCase().includes(q);
-      const level = s.courseLevel ?? '';
-      const shift = shiftOf(s.startTime);
-      const matchFilter =
-        filters.length === 0 || filters.includes(level) || filters.includes(shift);
-      return matchQ && matchFilter;
+      const lvl = (s.courseLevel ?? '').trim().toLowerCase();
+      const shift = shiftOf(s.startTime).trim().toLowerCase();
+      const matchLevel = !levelFilter || lvl === levelFilter;
+      const matchSchedule = !scheduleFilter || shift === scheduleFilter;
+      return matchQ && matchLevel && matchSchedule;
     });
   });
 
@@ -393,6 +443,10 @@ export class Matriculas implements OnInit {
     this.sectionService.getAll().subscribe({
       next: (data) => this.sections.set(data),
       error: () => this.sections.set([]),
+    });
+    this.courseService.getAll().subscribe({
+      next: (data) => this.courses.set(data),
+      error: () => this.courses.set([]),
     });
     const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';
