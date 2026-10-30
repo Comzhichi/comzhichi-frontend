@@ -35,7 +35,9 @@ export class Progreso implements OnInit {
     const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().pipe(
       map((data: Enrollment[]) => data.filter((e) =>
-        (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
+        ((studentId && e.studentId === studentId) || (email && e.studentEmail === email))
+        && e.status !== 'DROPPED'
+        && e.status !== 'FAILED'
       )),
       switchMap((enrs: Enrollment[]) => {
         if (enrs.length === 0) return of([]);

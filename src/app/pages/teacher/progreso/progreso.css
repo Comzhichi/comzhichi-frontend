@@ -23,3 +23,14 @@
 
 .table-card { border-radius: 0; border: 1px solid #e4e4e7;  overflow: hidden; }
 .record-table { width: 100%; }
+
+.section-group {
+  margin-bottom: var(--sp-4);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-extra1);
+  margin-bottom: var(--sp-2);
+}
