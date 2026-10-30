@@ -28,20 +28,20 @@ import { Attendance, Evaluation, AcademicObservation, LevelEvaluation } from '..
   styleUrl: './section-detail.css',
 })
 export class SectionDetail implements OnInit {
-  private route    = inject(ActivatedRoute);
+  private route             = inject(ActivatedRoute);
   private enrollmentService = inject(EnrollmentService);
-  private academic = inject(AcademicService);
-  private fb       = inject(FormBuilder);
-  private snack    = inject(MatSnackBar);
+  private academic          = inject(AcademicService);
+  private fb                = inject(FormBuilder);
+  private snack             = inject(MatSnackBar);
 
-  sectionId = 0;
-  enrollments   = signal<Enrollment[]>([]);
-  selected      = signal<Enrollment | null>(null);
-  attendances   = signal<Attendance[]>([]);
-  evaluations   = signal<Evaluation[]>([]);
-  observations  = signal<AcademicObservation[]>([]);
-  levelEvals    = signal<LevelEvaluation[]>([]);
-  loading       = signal(true);
+  sectionId    = 0;
+  enrollments  = signal<Enrollment[]>([]);
+  selected     = signal<Enrollment | null>(null);
+  attendances  = signal<Attendance[]>([]);
+  evaluations  = signal<Evaluation[]>([]);
+  observations = signal<AcademicObservation[]>([]);
+  levelEvals   = signal<LevelEvaluation[]>([]);
+  loading      = signal(true);
 
   today = new Date().toISOString().split('T')[0];
 
@@ -73,7 +73,10 @@ export class SectionDetail implements OnInit {
     this.sectionId = Number(this.route.snapshot.paramMap.get('id'));
     this.enrollmentService.getBySection(this.sectionId).subscribe({
       next: (data) => {
-        this.enrollments.set(data.filter((e) => e.sectionId === this.sectionId));
+        // Solo mostrar estudiantes con matrícula ACTIVE
+        this.enrollments.set(data.filter((e) =>
+          e.sectionId === this.sectionId && e.status === 'ACTIVE'
+        ));
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -136,13 +139,16 @@ export class SectionDetail implements OnInit {
         this.levelEvals.update(l => [...l, le]);
         this.levelForm.reset({ date: this.today, result: 'APPROVED', comments: '' });
         this.snack.open('Evaluación de nivel registrada', 'Cerrar', { duration: 2500 });
+        // Remover al estudiante de la lista ya que su matrícula pasó a APPROVED/FAILED
+        this.enrollments.update(list => list.filter(e => e.id !== this.selected()!.id));
+        this.selected.set(null);
       },
       error: (e) => this.snack.open(e.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
     });
   }
 
   statusLabel(s: string) {
-    const m: Record<string,string> = {
+    const m: Record<string, string> = {
       PRESENT: 'Presente', ABSENT: 'Ausente',
       LATE: 'Tardanza', JUSTIFIED: 'Justificado',
     };

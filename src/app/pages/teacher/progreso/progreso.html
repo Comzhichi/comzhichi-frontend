@@ -8,33 +8,34 @@
 
   @if (loading()) {
     <div class="center"><mat-spinner diameter="40" /></div>
-  } @else if (rows().length === 0) {
+  } @else if (groups().length === 0) {
     <div class="empty">
       <mat-icon class="empty-icon">trending_up</mat-icon>
       <p>No hay datos de progreso.</p>
     </div>
   } @else {
-    <mat-card class="table-card">
-      <table mat-table [dataSource]="rows()" class="record-table">
-        <ng-container matColumnDef="student">
-          <th mat-header-cell *matHeaderCellDef>Estudiante</th>
-          <td mat-cell *matCellDef="let r">{{ r.student }}</td>
-        </ng-container>
-        <ng-container matColumnDef="section">
-          <th mat-header-cell *matHeaderCellDef>Sección</th>
-          <td mat-cell *matCellDef="let r">{{ r.section }}</td>
-        </ng-container>
-        <ng-container matColumnDef="average">
-          <th mat-header-cell *matHeaderCellDef>Promedio</th>
-          <td mat-cell *matCellDef="let r">{{ r.average ?? '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="level">
-          <th mat-header-cell *matHeaderCellDef>Fin de nivel</th>
-          <td mat-cell *matCellDef="let r">{{ r.levelResult }}</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['student','section','average','level']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['student','section','average','level']"></tr>
-      </table>
-    </mat-card>
+    @for (g of groups(); track g.section.id) {
+      <div class="section-group">
+        <h2 class="section-title">{{ g.section.groupCode }} — {{ g.section.courseName }}</h2>
+        <mat-card class="table-card">
+          <table mat-table [dataSource]="g.rows" class="record-table">
+            <ng-container matColumnDef="student">
+              <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+              <td mat-cell *matCellDef="let r">{{ r.student }}</td>
+            </ng-container>
+            <ng-container matColumnDef="average">
+              <th mat-header-cell *matHeaderCellDef>Promedio</th>
+              <td mat-cell *matCellDef="let r">{{ r.average ?? '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="level">
+              <th mat-header-cell *matHeaderCellDef>Fin de nivel</th>
+              <td mat-cell *matCellDef="let r">{{ r.levelResult }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['student','average','level']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['student','average','level']"></tr>
+          </table>
+        </mat-card>
+      </div>
+    }
   }
 </div>
