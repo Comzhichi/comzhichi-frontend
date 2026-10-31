@@ -1,5 +1,14 @@
 <mat-toolbar class="bar">
   <a class="brand" routerLink="/parent">Comzhichi</a>
+  <nav class="nav" aria-label="Navegación del familiar">
+    <a matButton routerLink="/parent/seguimiento" routerLinkActive="active">Seguimiento</a>
+    <a matButton routerLink="/parent/notificaciones" routerLinkActive="active">
+      Notificaciones
+      @if (unread() > 0) {
+        <span class="badge">{{ unread() }}</span>
+      }
+    </a>
+  </nav>
   <span class="spacer"></span>
   <button matButton (click)="logout()">Salir</button>
 </mat-toolbar>

@@ -14,4 +14,7 @@
   max-width: 960px;
   margin: 0 auto;
   padding: 24px 16px;
-}
+}.nav { display: flex; gap: 4px; margin-left: 16px; }
+.nav .active { font-weight: 600; text-decoration: underline; text-underline-offset: 6px; }
+.badge { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px; border-radius: 9px; background: #b3261e; color: #fff; font-size: 0.7rem; line-height: 18px; text-align: center; }
+@media (max-width: 600px) { .nav { margin-left: 4px; } }
