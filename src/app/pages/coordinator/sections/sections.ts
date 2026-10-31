@@ -51,6 +51,7 @@ export class Sections implements OnInit {
   sections = signal<Section[]>([]);
   courses  = signal<Course[]>([]);
   teachers = signal<Teacher[]>([]);
+  eligibleTeachers = signal<Teacher[]>([]);
   loading  = signal(true);
   editingId = signal<number | null>(null);
   showForm  = signal(false);
@@ -79,7 +80,8 @@ export class Sections implements OnInit {
   ngOnInit() {
     this.sectionService.getAll().subscribe(d => { this.sections.set(d); this.loading.set(false); });
     this.courseService.getAll().subscribe(d => this.courses.set(d));
-    this.teacherService.getAll().subscribe(d => this.teachers.set(d));
+    this.teacherService.getAll().subscribe(d => { this.teachers.set(d); this.eligibleTeachers.set(d); });
+    this.form.valueChanges.subscribe(() => this.refreshEligibleTeachers());
   }
 
   toggleDay(day: string) {
@@ -87,6 +89,31 @@ export class Sections implements OnInit {
     this.selectedDays.set(
       current.includes(day) ? current.filter(d => d !== day) : [...current, day]
     );
+    this.refreshEligibleTeachers();
+  }
+
+  refreshEligibleTeachers() {
+    const v = this.form.getRawValue();
+    const days = this.selectedDays().join(',');
+    if (!v.courseId || !days || !v.startTime || !v.endTime) {
+      this.eligibleTeachers.set(this.teachers());
+      return;
+    }
+    this.teacherService.getEligible({
+      courseId: v.courseId,
+      dayOfWeek: days,
+      startTime: v.startTime,
+      endTime: v.endTime,
+    }).subscribe({
+      next: (data) => {
+        this.eligibleTeachers.set(data);
+        const current = this.form.getRawValue().teacherId;
+        if (current && !data.some((t) => t.id === current)) {
+          this.form.patchValue({ teacherId: null });
+        }
+      },
+      error: () => this.eligibleTeachers.set(this.teachers()),
+    });
   }
 
   isDaySelected(day: string) { return this.selectedDays().includes(day); }
@@ -110,6 +137,7 @@ export class Sections implements OnInit {
       courseId:       s.courseId,
       teacherId:      s.teacherId,
     });
+    this.refreshEligibleTeachers();
     this.showForm.set(true);
   }
 

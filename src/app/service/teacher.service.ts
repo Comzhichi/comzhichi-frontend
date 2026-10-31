@@ -12,4 +12,13 @@ export class TeacherService {
   getAll(): Observable<Teacher[]> {
     return this.http.get<Teacher[]>(`${this.api}/teachers`);
   }
+
+  getEligible(params: { courseId?: number | null; dayOfWeek?: string; startTime?: string; endTime?: string }): Observable<Teacher[]> {
+    const p: Record<string, string> = {};
+    if (params.courseId) p['courseId'] = String(params.courseId);
+    if (params.dayOfWeek) p['dayOfWeek'] = params.dayOfWeek;
+    if (params.startTime) p['startTime'] = params.startTime;
+    if (params.endTime) p['endTime'] = params.endTime;
+    return this.http.get<Teacher[]>(`${this.api}/teachers/eligible`, { params: p });
+  }
 }

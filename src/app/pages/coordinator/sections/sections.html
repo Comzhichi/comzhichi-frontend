@@ -46,7 +46,7 @@
           <mat-form-field>
             <mat-label>Profesor</mat-label>
             <mat-select formControlName="teacherId">
-              @for (t of teachers(); track t.id) {
+              @for (t of (eligibleTeachers().length ? eligibleTeachers() : teachers()); track t.id) {
                 <mat-option [value]="t.id">{{ t.userFullName }} — {{ t.specialty }}</mat-option>
               }
             </mat-select>
