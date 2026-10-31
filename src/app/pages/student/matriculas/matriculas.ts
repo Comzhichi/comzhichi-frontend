@@ -16,10 +16,12 @@ import { AuthService } from '../../../service/auth.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
 import { SectionService } from '../../../service/section.service';
 import { CourseService } from '../../../service/course.service';
+import { TeacherService } from '../../../service/teacher.service';
 import { AcademicService } from '../../../service/academic.service';
 import { Enrollment } from '../../../model/enrollment.model';
 import { Section } from '../../../model/section.model';
 import { Course } from '../../../model/course.model';
+import { Teacher } from '../../../model/teacher.model';
 import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { LanguageColorPipe } from '../../../util/language-color.pipe';
 
@@ -106,6 +108,7 @@ export class Matriculas implements OnInit {
   private enrollmentService = inject(EnrollmentService);
   private sectionService = inject(SectionService);
   private courseService = inject(CourseService);
+  private teacherService = inject(TeacherService);
   private academic = inject(AcademicService);
   private auth = inject(AuthService);
   private snackBar = inject(MatSnackBar);
@@ -115,6 +118,7 @@ export class Matriculas implements OnInit {
   levelResults = signal<Record<number, string>>({});
   sections = signal<Section[]>([]);
   courses = signal<Course[]>([]);
+  teachers = signal<Teacher[]>([]);
   error = signal('');
 
   searchQuery = signal('');
@@ -181,6 +185,12 @@ export class Matriculas implements OnInit {
   courseMap = computed(() => {
     const map = new Map<number, Course>();
     for (const c of this.courses()) map.set(c.id, c);
+    return map;
+  });
+
+  teacherById = computed(() => {
+    const map = new Map<number, Teacher>();
+    for (const t of this.teachers()) map.set(t.id, t);
     return map;
   });
 
@@ -428,7 +438,25 @@ export class Matriculas implements OnInit {
   }
 
   teacherName(s: Section): string {
-    return s.teacherName ?? s.teacherSpecialty ?? '—';
+    if (s.teacherId) {
+      const t = this.teacherById().get(s.teacherId);
+      if (t) return t.userFullName;
+    }
+    return s.teacherName ?? s.teacherSpecialty ?? '�';
+  }
+
+  levelOfSection(s: Section): string {
+    return this.courseMap().get(s.courseId)?.level || s.courseLevel || '�';
+  }
+
+  descriptionOfSection(s: Section): string {
+    return this.courseMap().get(s.courseId)?.description || s.courseDescription || '�';
+  }
+
+  teacherNameForEnrollment(e: Enrollment): string {
+    const sec = this.sections().find((x) => x.id === e.sectionId);
+    if (sec) return this.teacherName(sec);
+    return e.teacherName ?? '�';
   }
 
   shiftLabel(s: Section): string {
@@ -447,6 +475,10 @@ export class Matriculas implements OnInit {
     this.courseService.getAll().subscribe({
       next: (data) => this.courses.set(data),
       error: () => this.courses.set([]),
+    });
+    this.teacherService.getAll().subscribe({
+      next: (data) => this.teachers.set(data),
+      error: () => this.teachers.set([]),
     });
     const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';

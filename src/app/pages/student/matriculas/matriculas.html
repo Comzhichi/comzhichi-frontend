@@ -47,7 +47,7 @@
                     levelResult(e.id) || statusLabel(e.status)
                   }}</span>
                 </td>
-                <td>{{ e.teacherName ?? '—' }}</td>
+                <td>{{ teacherNameForEnrollment(e) }}</td>
               </tr>
             }
           </tbody>
@@ -139,8 +139,8 @@
                   >
                 }
               </td>
-              <td>{{ s.courseLevel ?? '—' }}</td>
-              <td>{{ s.courseDescription ?? '—' }}</td>
+              <td>{{ levelOfSection(s) }}</td>
+              <td>{{ descriptionOfSection(s) }}</td>
               <td>{{ s.groupCode }}</td>
               <td>{{ scheduleText(s) }}</td>
               <td>{{ s.classroom }}</td>
