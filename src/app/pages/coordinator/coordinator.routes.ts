@@ -22,6 +22,10 @@ export const COORDINATOR_ROUTES: Routes = [
         path: 'teachers',
         loadComponent: () => import('./teachers/teachers').then((m) => m.Teachers),
       },
+      {
+        path: 'horarios',
+        loadComponent: () => import('./horarios/horarios').then((m) => m.Horarios),
+      },
     ],
   },
 ];
