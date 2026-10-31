@@ -140,6 +140,14 @@ export class Horarios implements OnInit {
     return this.levelOfSection(s) || '—';
   }
 
+  levelCategory(level: string | null | undefined): string {
+    const l = (level || '').toLowerCase().trim();
+    if (l === 'a1' || l === 'a2' || l.includes('básico') || l.includes('basico')) return 'Básico';
+    if (l === 'b1' || l === 'b2' || l.includes('intermedio')) return 'Intermedio';
+    if (l === 'c1' || l === 'c2' || l.includes('avanzado')) return 'Avanzado';
+    return level || '';
+  }
+
   scheduleText(s: Section): string {
     return `${s.dayOfWeek} ${s.startTime}-${s.endTime}`;
   }

@@ -1,40 +1,211 @@
 <div class="dashboard">
   <header class="dash-header">
     <div>
-      <h1 class="dash-title">Progreso</h1>
-      <p class="dash-subtitle">Tu progreso académico y resultados de fin de nivel.</p>
+      <h1 class="dash-title">Mi progreso por idioma</h1>
+      <p class="dash-subtitle">Consulta tu nivel actual y tu avance académico en cada idioma que estudias.</p>
     </div>
   </header>
 
   @if (loading()) {
     <div class="center"><mat-spinner diameter="40" /></div>
-  } @else if (rows().length === 0) {
-    <div class="empty">
-      <mat-icon class="empty-icon">trending_up</mat-icon>
-      <p>No hay datos de progreso.</p>
+  } @else if (error()) {
+    <div class="state-card error-state">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p>No fue posible cargar tu progreso académico. Inténtalo nuevamente</p>
+      <button matButton="filled" (click)="retry()">Reintentar</button>
+    </div>
+  } @else if (studentEnrollments().length === 0) {
+    <div class="state-card empty-state">
+      <mat-icon class="state-icon">school</mat-icon>
+      <p>No tienes idiomas registrados actualmente</p>
     </div>
   } @else {
-    <mat-card class="table-card">
-      <table mat-table [dataSource]="rows()" class="record-table">
-        <ng-container matColumnDef="course">
-          <th mat-header-cell *matHeaderCellDef>Curso</th>
-          <td mat-cell *matCellDef="let r">{{ r.course }}</td>
-        </ng-container>
-        <ng-container matColumnDef="section">
-          <th mat-header-cell *matHeaderCellDef>Sección</th>
-          <td mat-cell *matCellDef="let r">{{ r.section }}</td>
-        </ng-container>
-        <ng-container matColumnDef="average">
-          <th mat-header-cell *matHeaderCellDef>Promedio</th>
-          <td mat-cell *matCellDef="let r">{{ r.average ?? '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="level">
-          <th mat-header-cell *matHeaderCellDef>Fin de nivel</th>
-          <td mat-cell *matCellDef="let r">{{ r.levelResult }}</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['course','section','average','level']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['course','section','average','level']"></tr>
-      </table>
+    <!-- Language selector -->
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Idioma</mat-label>
+        <mat-select [value]="selectedLanguage()" (selectionChange)="selectedLanguage.set($event.value)">
+          <mat-option value="Todos">Todos</mat-option>
+          @for (lang of languages(); track lang) {
+            <mat-option [value]="lang">{{ lang }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Ciclo académico</mat-label>
+        <mat-select [value]="selectedCycle()" (selectionChange)="selectedCycle.set($event.value)">
+          <mat-option value="Todos">Todos</mat-option>
+          @for (c of cycles(); track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Language summary cards -->
+    <div class="lang-cards">
+      @for (ls of languageSummaries(); track ls.language) {
+        <mat-card class="lang-card">
+          <div class="card-title-row">
+            <mat-icon>language</mat-icon>
+            <h2>{{ ls.language }}</h2>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nivel actual</span>
+              <span class="info-value">{{ ls.level }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Curso actual</span>
+              <span class="info-value">{{ ls.currentCourse }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Progreso</span>
+              <span class="info-value">{{ ls.progress }}%</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado</span>
+              <span class="status-chip" [class.available]="ls.status === 'Nivel completado'" [class.pending]="ls.status !== 'Nivel completado'">{{ ls.status }}</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="ls.progress"></div>
+          </div>
+          <button matButton (click)="selectedLanguage.set(ls.language)">Ver progreso</button>
+        </mat-card>
+      }
+    </div>
+
+    @if (hasAcademicInfo()) {
+    <!-- Selected language detail -->
+    <mat-card class="progress-card">
+      <div class="card-title-row">
+        <mat-icon>insights</mat-icon>
+        <h2>Progreso académico</h2>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Idioma</span>
+          <span class="info-value">{{ languageSelected() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Nivel actual</span>
+          <span class="info-value">{{ levelActual() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Curso actual</span>
+          <span class="info-value">{{ courseDisplayName(currentEnrollment()?.courseName ?? '', currentCourse()?.level ?? '') || '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ciclo académico</span>
+          <span class="info-value">{{ selectedCycle() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Sección</span>
+          <span class="info-value">{{ currentEnrollment()?.sectionGroupCode ?? '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Docente</span>
+          <span class="info-value">{{ currentTeacherName() }}</span>
+        </div>
+      </div>
+
+      <div class="attendance-row">
+        <div class="attendance-box">
+          <span class="info-label">Asistencia actual</span>
+          <span class="big-value green">{{ attendancePercent() }}%</span>
+        </div>
+        <div class="attendance-box">
+          <span class="info-label">Sesiones asistidas</span>
+          <span class="big-value">{{ sessionsAttended() }}</span>
+        </div>
+        <div class="attendance-box">
+          <span class="info-label">Faltas</span>
+          <span class="big-value red">{{ sessionsMissed() }}</span>
+        </div>
+      </div>
+
+      <div class="progress-bar-block">
+        <div class="progress-bar-header">
+          <span>Porcentaje de progreso académico</span>
+          <span class="progress-value">{{ progressPercent() }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Estado académico</span>
+        <span class="status-chip" [class.available]="progressPercent() === 100" [class.pending]="progressPercent() < 100">
+          {{ progressPercent() === 100 ? 'Nivel completado' : 'En curso' }}
+        </span>
+      </div>
     </mat-card>
+
+    <!-- Next levels -->
+    <mat-card class="section-card">
+      <div class="card-title-row">
+        <mat-icon>arrow_forward</mat-icon>
+        <h2>Próximos niveles</h2>
+      </div>
+      @if (nextModules().length === 0) {
+        <p class="empty-msg">No hay módulos siguientes disponibles por el momento</p>
+      } @else {
+        <div class="module-list">
+          @for (m of nextModules(); track m.name) {
+            <div class="module-item" [class.blocked]="m.status === 'bloqueado'" [class.pending]="m.status === 'pendiente'">
+              <div class="module-main">
+                <span class="module-name">{{ m.name }}</span>
+                <span class="module-level">{{ m.level }}</span>
+              </div>
+              <div class="module-req">{{ m.requirements }}</div>
+              <span class="status-chip" [class.available]="m.status === 'disponible'" [class.blocked]="m.status === 'bloqueado'" [class.pending]="m.status === 'pendiente'">
+                {{ statusLabel(m.status) }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </mat-card>
+
+    <!-- Academic history -->
+    <mat-card class="section-card">
+      <div class="card-title-row">
+        <mat-icon>history</mat-icon>
+        <h2>Historial académico</h2>
+      </div>
+      @if (!hasHistory()) {
+        <p class="empty-msg">No existen registros académicos para este idioma</p>
+      } @else {
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Curso</th>
+                <th>Nivel</th>
+                <th>Ciclo académico</th>
+                <th>Calificación final</th>
+                <th>Estado del curso</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of history(); track h.course + h.cycle) {
+                <tr>
+                  <td>{{ h.course }}</td>
+                  <td>{{ h.level }}</td>
+                  <td>{{ h.cycle }}</td>
+                  <td>{{ h.grade ?? '—' }}</td>
+                  <td>{{ h.status }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </mat-card>
+    }
   }
 </div>

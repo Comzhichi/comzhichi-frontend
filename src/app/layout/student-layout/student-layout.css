@@ -116,6 +116,12 @@
   outline: none;
 }
 
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.28);
+  opacity: 1;
+  font-weight: 700;
+}
+
 .search {
   flex: 0 1 320px;
   margin: 0 8px;

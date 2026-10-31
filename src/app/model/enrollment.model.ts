@@ -11,4 +11,8 @@ export interface Enrollment {
   teacherName?: string;
   schedule?: string;
   classroom?: string;
+  sectionDayOfWeek?: string;
+  sectionStartTime?: string;
+  sectionEndTime?: string;
+  sectionClassroom?: string;
 }
