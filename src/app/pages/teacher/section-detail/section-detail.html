@@ -96,7 +96,10 @@
                     <mat-label>Retroalimentación</mat-label>
                     <input matInput formControlName="feedback" />
                   </mat-form-field>
-                  <button mat-flat-button type="submit" class="full">Registrar evaluación</button>
+                  <button mat-flat-button type="submit" class="full">{{ editingEvalId() ? 'Actualizar evaluacion' : 'Registrar evaluacion' }}</button>
+                  @if (editingEvalId()) {
+                    <button mat-button type="button" class="full" (click)="cancelEditEvaluation()">Cancelar edicion</button>
+                  }
                 </form>
                 <table mat-table [dataSource]="evaluations()" class="record-table">
                   <ng-container matColumnDef="type">
@@ -116,7 +119,7 @@
                     <td mat-cell *matCellDef="let e">{{ e.feedback }}</td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="['type','date','score','feedback']"></tr>
-                  <tr mat-row *matRowDef="let row; columns: ['type','date','score','feedback']"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['type','date','score','feedback']" (click)="editEvaluation(row)" style="cursor:pointer"></tr>
                 </table>
               </div>
             </mat-tab>

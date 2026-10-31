@@ -96,7 +96,7 @@ export class Sections implements OnInit {
     const v = this.form.getRawValue();
     const days = this.selectedDays().join(',');
     if (!v.courseId || !days || !v.startTime || !v.endTime) {
-      this.eligibleTeachers.set(this.teachers());
+      this.eligibleTeachers.set([]);
       return;
     }
     this.teacherService.getEligible({
@@ -112,7 +112,7 @@ export class Sections implements OnInit {
           this.form.patchValue({ teacherId: null });
         }
       },
-      error: () => this.eligibleTeachers.set(this.teachers()),
+      error: () => this.eligibleTeachers.set([]),
     });
   }
 

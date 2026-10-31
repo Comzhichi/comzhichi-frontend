@@ -42,6 +42,7 @@ export class SectionDetail implements OnInit {
   observations = signal<AcademicObservation[]>([]);
   levelEvals   = signal<LevelEvaluation[]>([]);
   loading      = signal(true);
+  editingEvalId = signal<number | null>(null);
 
   today = new Date().toISOString().split('T')[0];
 
@@ -73,9 +74,8 @@ export class SectionDetail implements OnInit {
     this.sectionId = Number(this.route.snapshot.paramMap.get('id'));
     this.enrollmentService.getBySection(this.sectionId).subscribe({
       next: (data) => {
-        // Solo mostrar estudiantes con matrícula ACTIVE
         this.enrollments.set(data.filter((e) =>
-          e.sectionId === this.sectionId && e.status === 'ACTIVE'
+          e.sectionId === this.sectionId && e.status !== 'DROPPED'
         ));
         this.loading.set(false);
       },
@@ -106,16 +106,42 @@ export class SectionDetail implements OnInit {
   }
 
   saveEvaluation() {
-    if (this.evaluationForm.invalid) return;
+    if (this.evaluationForm.invalid || !this.selected()) return;
     const v = this.evaluationForm.getRawValue();
-    this.academic.createEvaluation({ enrollmentId: this.selected()!.id, ...v }).subscribe({
+    const body = { enrollmentId: this.selected()!.id, ...v };
+    const id = this.editingEvalId();
+    const req = id
+      ? this.academic.updateEvaluation(id, body)
+      : this.academic.createEvaluation(body);
+    req.subscribe({
       next: (ev) => {
-        this.evaluations.update(l => [...l, ev]);
+        if (id) {
+          this.evaluations.update(l => l.map(x => x.id === id ? ev : x));
+          this.snack.open('Evaluacion actualizada', 'Cerrar', { duration: 2500 });
+        } else {
+          this.evaluations.update(l => [...l, ev]);
+          this.snack.open('Evaluacion registrada', 'Cerrar', { duration: 2500 });
+        }
         this.evaluationForm.reset({ type: 'PARTIAL', date: this.today, score: 0, feedback: '' });
-        this.snack.open('Evaluación registrada', 'Cerrar', { duration: 2500 });
+        this.editingEvalId.set(null);
       },
       error: (e) => this.snack.open(e.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
     });
+  }
+
+  editEvaluation(ev: Evaluation) {
+    this.editingEvalId.set(ev.id);
+    this.evaluationForm.setValue({
+      type: ev.type,
+      date: ev.date,
+      score: ev.score,
+      feedback: ev.feedback,
+    });
+  }
+
+  cancelEditEvaluation() {
+    this.editingEvalId.set(null);
+    this.evaluationForm.reset({ type: 'PARTIAL', date: this.today, score: 0, feedback: '' });
   }
 
   saveObservation() {
@@ -125,7 +151,7 @@ export class SectionDetail implements OnInit {
       next: (ob) => {
         this.observations.update(l => [...l, ob]);
         this.observationForm.reset({ date: this.today, observation: '' });
-        this.snack.open('Observación registrada', 'Cerrar', { duration: 2500 });
+        this.snack.open('Observacion registrada', 'Cerrar', { duration: 2500 });
       },
       error: (e) => this.snack.open(e.error?.message ?? 'Error', 'Cerrar', { duration: 4000 }),
     });
@@ -138,8 +164,7 @@ export class SectionDetail implements OnInit {
       next: (le) => {
         this.levelEvals.update(l => [...l, le]);
         this.levelForm.reset({ date: this.today, result: 'APPROVED', comments: '' });
-        this.snack.open('Evaluación de nivel registrada', 'Cerrar', { duration: 2500 });
-        // Remover al estudiante de la lista ya que su matrícula pasó a APPROVED/FAILED
+        this.snack.open('Evaluacion de nivel registrada', 'Cerrar', { duration: 2500 });
         this.enrollments.update(list => list.filter(e => e.id !== this.selected()!.id));
         this.selected.set(null);
       },
