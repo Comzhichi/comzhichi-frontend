@@ -172,7 +172,7 @@ export class Matriculas implements OnInit {
       if (e.status !== 'ACTIVE' && e.status !== 'APPROVED') continue;
       const name = (e.courseName || '').trim().toLowerCase();
       const sec = this.findSectionForEnrollment(e);
-      const level = (sec?.courseLevel || '').trim().toLowerCase();
+      const level = this.levelCategory(this.courseMap().get(sec?.courseId ?? 0)?.level || sec?.courseLevel || '').trim().toLowerCase();
       if (level) {
         exact.add(name + '|' + level);
       } else {
@@ -210,7 +210,7 @@ export class Matriculas implements OnInit {
   levels = computed(() => {
     const set = new Set<string>();
     for (const s of this.sections()) {
-      const level = (s.courseLevel || '').trim();
+      const level = this.levelCategory(this.courseMap().get(s.courseId)?.level || s.courseLevel || '').trim();
       if (level) set.add(level);
     }
     return [...set].sort();
@@ -226,7 +226,7 @@ export class Matriculas implements OnInit {
     const enrolled = this.enrolledCourseKeys();
     return this.sections().filter((s) => {
       const name = (s.courseName || '').trim().toLowerCase();
-      const level = (s.courseLevel || '').trim().toLowerCase();
+      const level = this.levelCategory(this.courseMap().get(s.courseId)?.level || s.courseLevel || '').trim().toLowerCase();
       if (enrolled.byName.has(name)) return false;
       if (enrolled.exact.has(name + '|' + level)) return false;
       const sLang = this.languageOfSection(s).trim().toLowerCase();
@@ -237,7 +237,7 @@ export class Matriculas implements OnInit {
         s.courseName.toLowerCase().includes(q) ||
         s.groupCode.toLowerCase().includes(q) ||
         teacher.toLowerCase().includes(q);
-      const lvl = (s.courseLevel ?? '').trim().toLowerCase();
+      const lvl = this.levelCategory(this.courseMap().get(s.courseId)?.level || s.courseLevel || '').trim().toLowerCase();
       const shift = shiftOf(s.startTime).trim().toLowerCase();
       const matchLevel = !levelFilter || lvl === levelFilter;
       const matchSchedule = !scheduleFilter || shift === scheduleFilter;
@@ -447,6 +447,14 @@ export class Matriculas implements OnInit {
 
   levelOfSection(s: Section): string {
     return this.courseMap().get(s.courseId)?.level || s.courseLevel || '�';
+  }
+
+  levelCategory(level: string | null | undefined): string {
+    const l = (level || '').toLowerCase().trim();
+    if (l === 'a1' || l === 'a2' || l.includes('básico') || l.includes('basico')) return 'Básico';
+    if (l === 'b1' || l === 'b2' || l.includes('intermedio')) return 'Intermedio';
+    if (l === 'c1' || l === 'c2' || l.includes('avanzado')) return 'Avanzado';
+    return level || '';
   }
 
   descriptionOfSection(s: Section): string {
