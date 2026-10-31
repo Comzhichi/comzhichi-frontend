@@ -21,6 +21,16 @@ export class Horario implements OnInit {
   sections = signal<Section[]>([]);
   loading = signal(true);
 
+  readonly days = [
+    { key: 'MONDAY', label: 'Lun' },
+    { key: 'TUESDAY', label: 'Mar' },
+    { key: 'WEDNESDAY', label: 'Mié' },
+    { key: 'THURSDAY', label: 'Jue' },
+    { key: 'FRIDAY', label: 'Vie' },
+    { key: 'SATURDAY', label: 'Sáb' },
+  ];
+  readonly hours = [7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+
   ngOnInit() {
     const pid = this.profileId;
     this.sectionService.getAll().subscribe({
@@ -43,5 +53,27 @@ export class Horario implements OnInit {
       THURSDAY: 'Jue', FRIDAY: 'Vie', SATURDAY: 'Sáb',
     };
     return days.split(',').map((d) => map[d.trim()] ?? d).join(' / ');
+  }
+
+  private toMinutes(time: string): number {
+    const m = (time || '').match(/(\d{1,2}):(\d{2})/);
+    if (!m) return 0;
+    return +m[1] * 60 + +m[2];
+  }
+
+  sectionsByDay(dayKey: string): Section[] {
+    return this.sections().filter((s) => (s.dayOfWeek || '').toUpperCase().includes(dayKey));
+  }
+
+  eventTop(s: Section): number {
+    const start = this.toMinutes(s.startTime);
+    const base = 7 * 60;
+    return Math.max(0, start - base);
+  }
+
+  eventHeight(s: Section): number {
+    const start = this.toMinutes(s.startTime);
+    const end = this.toMinutes(s.endTime);
+    return Math.max(30, end - start);
   }
 }
