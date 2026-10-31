@@ -27,6 +27,9 @@ export class AcademicService {
   createEvaluation(body: { enrollmentId: number; type: string; date: string; score: number; feedback: string }): Observable<Evaluation> {
     return this.http.post<Evaluation>(`${this.api}/evaluations`, body);
   }
+  updateEvaluation(id: number, body: { enrollmentId: number; type: string; date: string; score: number; feedback: string }): Observable<Evaluation> {
+    return this.http.put<Evaluation>(`${this.api}/evaluations/${id}`, body);
+  }
 
   // Observations
   getObservations(enrollmentId: number): Observable<AcademicObservation[]> {

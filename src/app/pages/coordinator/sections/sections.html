@@ -25,11 +25,11 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>Hora inicio</mat-label>
-            <input matInput formControlName="startTime" type="time" />
+            <input matInput formControlName="startTime" type="time" (change)="refreshEligibleTeachers()" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>Hora fin</mat-label>
-            <input matInput formControlName="endTime" type="time" />
+            <input matInput formControlName="endTime" type="time" (change)="refreshEligibleTeachers()" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>Vacantes totales</mat-label>
@@ -37,7 +37,7 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>Curso</mat-label>
-            <mat-select formControlName="courseId">
+            <mat-select formControlName="courseId" (selectionChange)="refreshEligibleTeachers()">
               @for (c of courses(); track c.id) {
                 <mat-option [value]="c.id">{{ c.name }}</mat-option>
               }
@@ -46,7 +46,10 @@
           <mat-form-field>
             <mat-label>Profesor</mat-label>
             <mat-select formControlName="teacherId">
-              @for (t of teachers(); track t.id) {
+              @if (eligibleTeachers().length === 0) {
+                <mat-option disabled>No hay docentes disponibles</mat-option>
+              }
+              @for (t of eligibleTeachers(); track t.id) {
                 <mat-option [value]="t.id">{{ t.userFullName }} — {{ t.specialty }}</mat-option>
               }
             </mat-select>

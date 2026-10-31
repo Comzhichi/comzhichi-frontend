@@ -83,7 +83,7 @@ export class Horarios implements OnInit {
   levels = computed(() => {
     const set = new Set<string>();
     for (const s of this.sections()) {
-      const level = this.levelOfSection(s).trim();
+      const level = this.levelCategory(this.levelOfSection(s)).trim();
       if (level) set.add(level);
     }
     return [...set].sort();
@@ -104,7 +104,7 @@ export class Horarios implements OnInit {
         s.groupCode.toLowerCase().includes(q) ||
         teacher.toLowerCase().includes(q);
       const sLang = this.languageOfSection(s).trim().toLowerCase();
-      const sLevel = this.levelOfSection(s).trim().toLowerCase();
+      const sLevel = this.levelCategory(this.levelOfSection(s)).trim().toLowerCase();
       const sSchedule = shiftOf(s.startTime).toLowerCase();
       const matchLang = !lang || sLang === lang;
       const matchLevel = !level || sLevel === level;
