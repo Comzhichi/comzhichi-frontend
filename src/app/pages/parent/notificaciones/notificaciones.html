@@ -1,17 +1,17 @@
-<section class="wrap">
-  <header class="page-header">
+<div class="dashboard">
+  <header class="dash-header">
     <div>
-      <h1>Notificaciones</h1>
-      <p>Eventos académicos relevantes de tu familiar, como resultados de evaluaciones de fin de nivel.</p>
+      <h1 class="dash-title">Notificaciones</h1>
+      <p class="dash-subtitle">Eventos académicos relevantes de tu familiar, como resultados de evaluaciones de fin de nivel.</p>
     </div>
     @if (unreadCount() > 0) {
-      <button matButton="outlined" (click)="markAllAsRead()">
+      <button matButton="filled" (click)="markAllAsRead()">
         <mat-icon>done_all</mat-icon> Marcar todas como leídas
       </button>
     }
   </header>
 
-  <mat-button-toggle-group [value]="view()" (change)="view.set($event.value)" aria-label="Filtro de notificaciones">
+  <mat-button-toggle-group class="toggle" [value]="view()" (change)="view.set($event.value)" aria-label="Filtro de notificaciones">
     <mat-button-toggle value="UNREAD">No leídas ({{ unreadCount() }})</mat-button-toggle>
     <mat-button-toggle value="ALL">Todas ({{ notifications().length }})</mat-button-toggle>
   </mat-button-toggle-group>
@@ -19,28 +19,32 @@
   @if (loading()) {
     <div class="center"><mat-spinner diameter="40" /></div>
   } @else if (error()) {
-    <mat-card class="state-card error"><mat-card-content>{{ error() }}</mat-card-content></mat-card>
+    <div class="state-card error-state">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button matButton="filled" (click)="load()">Reintentar</button>
+    </div>
   } @else if (visible().length === 0) {
-    <mat-card class="state-card">
-      <mat-card-content>
-        <mat-icon>notifications_none</mat-icon>
-        <p>{{ view() === 'UNREAD' ? 'No tienes nuevas notificaciones.' : 'No existen notificaciones.' }}</p>
-      </mat-card-content>
-    </mat-card>
+    <div class="state-card">
+      <mat-icon class="state-icon">notifications_none</mat-icon>
+      <p>{{ view() === 'UNREAD' ? 'No tienes nuevas notificaciones.' : 'No existen notificaciones.' }}</p>
+    </div>
   } @else {
     <ul class="list">
       @for (n of visible(); track n.id) {
         <li class="item" [class.unread]="!n.read">
-          <mat-icon class="item-icon">{{ iconFor(n) }}</mat-icon>
+          <span class="item-icon"><mat-icon>{{ iconFor(n) }}</mat-icon></span>
           <div class="item-body">
-            <p class="item-msg">{{ n.message }}</p>
+            <p class="item-msg">{{ messageOf(n) }}</p>
             <span class="item-date">{{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
           @if (!n.read) {
             <button matButton (click)="markAsRead(n)">Marcar como leída</button>
+          } @else {
+            <span class="read-tag"><mat-icon>check</mat-icon> Leída</span>
           }
         </li>
       }
     </ul>
   }
-</section>
+</div>

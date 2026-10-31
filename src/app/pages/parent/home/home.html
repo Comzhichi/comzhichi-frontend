@@ -1,24 +1,24 @@
-<div class="home-wrap">
-  <div class="home-header">
-    <h1>Bienvenido, {{ userName }}</h1>
-    <p>Portal de seguimiento académico familiar.</p>
-  </div>
+<div class="dashboard">
+  <header class="dash-header">
+    <div class="dash-text">
+      <h1 class="dash-title">Bienvenido, {{ userName }}</h1>
+      <p class="dash-subtitle">Portal de seguimiento académico familiar.</p>
+    </div>
+  </header>
 
-  <div class="cards">
-    <mat-card class="info-card">
-      <mat-card-header><mat-card-title>Seguimiento académico</mat-card-title></mat-card-header>
-      <mat-card-content>
-        <p>Consulta la asistencia y las calificaciones de tu familiar por curso y ciclo.</p>
-      </mat-card-content>
-      <mat-card-actions><a matButton="filled" routerLink="/parent/seguimiento">Ver seguimiento</a></mat-card-actions>
-    </mat-card>
+  <div class="cards-grid">
+    <a class="action-card" routerLink="/parent/seguimiento">
+      <mat-icon class="action-icon">insights</mat-icon>
+      <h2>Seguimiento académico</h2>
+      <p>Consulta la asistencia y las calificaciones de tu familiar por curso y ciclo.</p>
+      <span class="action-link">Ver seguimiento <mat-icon>arrow_forward</mat-icon></span>
+    </a>
 
-    <mat-card class="info-card">
-      <mat-card-header><mat-card-title>Notificaciones</mat-card-title></mat-card-header>
-      <mat-card-content>
-        <p>Revisa los avisos sobre eventos académicos, como resultados de evaluaciones de fin de nivel.</p>
-      </mat-card-content>
-      <mat-card-actions><a matButton="filled" routerLink="/parent/notificaciones">Ver notificaciones</a></mat-card-actions>
-    </mat-card>
+    <a class="action-card" routerLink="/parent/notificaciones">
+      <mat-icon class="action-icon">notifications</mat-icon>
+      <h2>Notificaciones</h2>
+      <p>Revisa los avisos sobre eventos académicos, como resultados de evaluaciones de fin de nivel.</p>
+      <span class="action-link">Ver notificaciones <mat-icon>arrow_forward</mat-icon></span>
+    </a>
   </div>
 </div>

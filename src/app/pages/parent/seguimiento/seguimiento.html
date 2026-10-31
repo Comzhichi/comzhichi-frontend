@@ -1,23 +1,26 @@
-<section class="wrap">
-  <header class="page-header">
-    <h1>Seguimiento académico</h1>
-    <p>Consulta la asistencia y las calificaciones de tu familiar, por curso y ciclo.</p>
+<div class="dashboard">
+  <header class="dash-header">
+    <div>
+      <h1 class="dash-title">Seguimiento académico</h1>
+      <p class="dash-subtitle">Consulta la asistencia y las calificaciones de tu familiar, por curso y ciclo.</p>
+    </div>
   </header>
 
   @if (loading()) {
     <div class="center"><mat-spinner diameter="40" /></div>
   } @else if (error()) {
-    <mat-card class="state-card error"><mat-card-content>{{ error() }}</mat-card-content></mat-card>
+    <div class="state-card error-state">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
   } @else if (students().length === 0) {
-    <mat-card class="state-card">
-      <mat-card-content>
-        <mat-icon>link_off</mat-icon>
-        <p>Aún no tienes estudiantes vinculados. Solicita la vinculación a la coordinación académica.</p>
-      </mat-card-content>
-    </mat-card>
+    <div class="state-card">
+      <mat-icon class="state-icon">link_off</mat-icon>
+      <p>Aún no tienes estudiantes vinculados. Solicita la vinculación a la coordinación académica.</p>
+    </div>
   } @else {
-    <div class="filters">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Estudiante</mat-label>
         <mat-select [value]="selectedStudentId()" (selectionChange)="selectStudent($event.value)">
           @for (s of students(); track s.id) {
@@ -27,7 +30,7 @@
       </mat-form-field>
 
       @if (courseOptions().length > 1) {
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Curso</mat-label>
           <mat-select [value]="courseFilter()" (selectionChange)="courseFilter.set($event.value)">
             <mat-option value="ALL">Todos los cursos</mat-option>
@@ -42,37 +45,44 @@
     @if (loadingRecords()) {
       <div class="center"><mat-spinner diameter="40" /></div>
     } @else if (records().length === 0 || hasNoAcademicData()) {
-      <mat-card class="state-card">
-        <mat-card-content>
-          <mat-icon>info</mat-icon>
-          <p>No hay información de asistencia ni calificaciones disponible para este estudiante.</p>
-        </mat-card-content>
-      </mat-card>
+      <div class="state-card">
+        <mat-icon class="state-icon">school</mat-icon>
+        <p>No hay información de asistencia ni calificaciones disponible para este estudiante.</p>
+      </div>
     } @else {
       @for (r of filteredRecords(); track r.enrollment.id) {
         <mat-card class="course-card">
-          <mat-card-header>
-            <mat-card-title>{{ r.enrollment.courseName }}</mat-card-title>
-            <mat-card-subtitle>
-              Ciclo {{ r.cycle }} · Sección {{ r.enrollment.sectionGroupCode }}
-              <span class="status status-{{ r.enrollment.status }}">{{ enrollmentLabel(r.enrollment.status) }}</span>
-            </mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content>
-            <div class="kpis">
-              <div class="kpi">
-                <span class="kpi-value">{{ r.attendanceRate !== null ? r.attendanceRate + '%' : '—' }}</span>
-                <span class="kpi-label">Asistencia</span>
-              </div>
-              <div class="kpi">
-                <span class="kpi-value">{{ r.average ?? '—' }}</span>
-                <span class="kpi-label">Promedio</span>
-              </div>
+          <div class="card-title-row">
+            <span class="flag-box" [style.background-color]="r.enrollment.courseName | languageColor">
+              <img [src]="r.enrollment.courseName | languageFlag" alt="" />
+            </span>
+            <div class="card-title-text">
+              <h2>{{ r.enrollment.courseName }}</h2>
+              <span class="card-meta">Ciclo {{ r.cycle }} · Sección {{ r.enrollment.sectionGroupCode }}</span>
             </div>
+            <span class="status status-{{ r.enrollment.status }}">{{ enrollmentLabel(r.enrollment.status) }}</span>
+          </div>
 
-            <h3>Asistencia</h3>
-            @if (r.attendances.length) {
+          <div class="kpi-row">
+            <div class="kpi-box">
+              <span class="info-label">Asistencia</span>
+              <span class="big-value" [class.green]="(r.attendanceRate ?? 0) >= 70" [class.red]="r.attendanceRate !== null && r.attendanceRate < 70">
+                {{ r.attendanceRate !== null ? r.attendanceRate + '%' : '—' }}
+              </span>
+            </div>
+            <div class="kpi-box">
+              <span class="info-label">Promedio</span>
+              <span class="big-value">{{ r.average ?? '—' }}</span>
+            </div>
+            <div class="kpi-box">
+              <span class="info-label">Clases registradas</span>
+              <span class="big-value">{{ r.attendances.length }}</span>
+            </div>
+          </div>
+
+          <h3 class="block-title"><mat-icon>event_available</mat-icon> Asistencia</h3>
+          @if (r.attendances.length) {
+            <div class="table-wrap">
               <table mat-table [dataSource]="r.attendances" class="table">
                 <ng-container matColumnDef="date">
                   <th mat-header-cell *matHeaderCellDef>Fecha</th>
@@ -80,9 +90,7 @@
                 </ng-container>
                 <ng-container matColumnDef="status">
                   <th mat-header-cell *matHeaderCellDef>Estado</th>
-                  <td mat-cell *matCellDef="let a">
-                    <span class="att att-{{ a.status }}">{{ attendanceLabel(a.status) }}</span>
-                  </td>
+                  <td mat-cell *matCellDef="let a"><span class="att att-{{ a.status }}">{{ attendanceLabel(a.status) }}</span></td>
                 </ng-container>
                 <ng-container matColumnDef="observation">
                   <th mat-header-cell *matHeaderCellDef>Observación</th>
@@ -91,12 +99,14 @@
                 <tr mat-header-row *matHeaderRowDef="attendanceColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: attendanceColumns"></tr>
               </table>
-            } @else {
-              <p class="empty">Sin registros de asistencia en este curso.</p>
-            }
+            </div>
+          } @else {
+            <p class="empty-line">Sin registros de asistencia en este curso.</p>
+          }
 
-            <h3>Calificaciones</h3>
-            @if (r.evaluations.length) {
+          <h3 class="block-title"><mat-icon>grade</mat-icon> Calificaciones</h3>
+          @if (r.evaluations.length) {
+            <div class="table-wrap">
               <table mat-table [dataSource]="r.evaluations" class="table">
                 <ng-container matColumnDef="date">
                   <th mat-header-cell *matHeaderCellDef>Fecha</th>
@@ -117,12 +127,12 @@
                 <tr mat-header-row *matHeaderRowDef="evaluationColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: evaluationColumns"></tr>
               </table>
-            } @else {
-              <p class="empty">Sin calificaciones registradas en este curso.</p>
-            }
-          </mat-card-content>
+            </div>
+          } @else {
+            <p class="empty-line">Sin calificaciones registradas en este curso.</p>
+          }
         </mat-card>
       }
     }
   }
-</section>
+</div>

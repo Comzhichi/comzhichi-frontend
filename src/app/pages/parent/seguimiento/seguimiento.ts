@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { LanguageColorPipe } from '../../../util/language-color.pipe';
+import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { ParentService } from '../../../service/parent.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
 import { AcademicService } from '../../../service/academic.service';
@@ -49,6 +51,8 @@ const ENROLLMENT_LABEL: Record<Enrollment['status'], string> = {
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    LanguageColorPipe,
+    LanguageFlagPipe,
   ],
   templateUrl: './seguimiento.html',
   styleUrl: './seguimiento.css',

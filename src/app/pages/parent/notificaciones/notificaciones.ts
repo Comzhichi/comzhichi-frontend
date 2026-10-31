@@ -65,6 +65,11 @@ export class Notificaciones implements OnInit {
       .forEach((n) => this.markAsRead(n));
   }
 
+  /** Traduce los resultados que envía el backend (APPROVED / FAILED) al español. */
+  messageOf(n: AppNotification): string {
+    return n.message.replace(/\bAPPROVED\b/g, 'Aprobado').replace(/\bFAILED\b/g, 'Desaprobado');
+  }
+
   /** Ícono según el tipo de evento académico descrito en el mensaje. */
   iconFor(n: AppNotification): string {
     const msg = n.message.toLowerCase();
