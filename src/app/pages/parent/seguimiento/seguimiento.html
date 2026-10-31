@@ -1,0 +1,128 @@
+<section class="wrap">
+  <header class="page-header">
+    <h1>Seguimiento académico</h1>
+    <p>Consulta la asistencia y las calificaciones de tu familiar, por curso y ciclo.</p>
+  </header>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (error()) {
+    <mat-card class="state-card error"><mat-card-content>{{ error() }}</mat-card-content></mat-card>
+  } @else if (students().length === 0) {
+    <mat-card class="state-card">
+      <mat-card-content>
+        <mat-icon>link_off</mat-icon>
+        <p>Aún no tienes estudiantes vinculados. Solicita la vinculación a la coordinación académica.</p>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Estudiante</mat-label>
+        <mat-select [value]="selectedStudentId()" (selectionChange)="selectStudent($event.value)">
+          @for (s of students(); track s.id) {
+            <mat-option [value]="s.studentId">{{ s.studentFullName }} ({{ s.relationship }})</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (courseOptions().length > 1) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Curso</mat-label>
+          <mat-select [value]="courseFilter()" (selectionChange)="courseFilter.set($event.value)">
+            <mat-option value="ALL">Todos los cursos</mat-option>
+            @for (c of courseOptions(); track c) {
+              <mat-option [value]="c">{{ c }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+
+    @if (loadingRecords()) {
+      <div class="center"><mat-spinner diameter="40" /></div>
+    } @else if (records().length === 0 || hasNoAcademicData()) {
+      <mat-card class="state-card">
+        <mat-card-content>
+          <mat-icon>info</mat-icon>
+          <p>No hay información de asistencia ni calificaciones disponible para este estudiante.</p>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      @for (r of filteredRecords(); track r.enrollment.id) {
+        <mat-card class="course-card">
+          <mat-card-header>
+            <mat-card-title>{{ r.enrollment.courseName }}</mat-card-title>
+            <mat-card-subtitle>
+              Ciclo {{ r.cycle }} · Sección {{ r.enrollment.sectionGroupCode }}
+              <span class="status status-{{ r.enrollment.status }}">{{ enrollmentLabel(r.enrollment.status) }}</span>
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="kpis">
+              <div class="kpi">
+                <span class="kpi-value">{{ r.attendanceRate !== null ? r.attendanceRate + '%' : '—' }}</span>
+                <span class="kpi-label">Asistencia</span>
+              </div>
+              <div class="kpi">
+                <span class="kpi-value">{{ r.average ?? '—' }}</span>
+                <span class="kpi-label">Promedio</span>
+              </div>
+            </div>
+
+            <h3>Asistencia</h3>
+            @if (r.attendances.length) {
+              <table mat-table [dataSource]="r.attendances" class="table">
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                  <td mat-cell *matCellDef="let a">{{ a.date | date: 'dd/MM/yyyy' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Estado</th>
+                  <td mat-cell *matCellDef="let a">
+                    <span class="att att-{{ a.status }}">{{ attendanceLabel(a.status) }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="observation">
+                  <th mat-header-cell *matHeaderCellDef>Observación</th>
+                  <td mat-cell *matCellDef="let a">{{ a.observation || '—' }}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="attendanceColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: attendanceColumns"></tr>
+              </table>
+            } @else {
+              <p class="empty">Sin registros de asistencia en este curso.</p>
+            }
+
+            <h3>Calificaciones</h3>
+            @if (r.evaluations.length) {
+              <table mat-table [dataSource]="r.evaluations" class="table">
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                  <td mat-cell *matCellDef="let e">{{ e.date | date: 'dd/MM/yyyy' }}</td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                  <td mat-cell *matCellDef="let e">{{ evaluationLabel(e.type) }}</td>
+                </ng-container>
+                <ng-container matColumnDef="score">
+                  <th mat-header-cell *matHeaderCellDef>Nota</th>
+                  <td mat-cell *matCellDef="let e"><strong>{{ e.score }}</strong></td>
+                </ng-container>
+                <ng-container matColumnDef="feedback">
+                  <th mat-header-cell *matHeaderCellDef>Comentario</th>
+                  <td mat-cell *matCellDef="let e">{{ e.feedback || '—' }}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="evaluationColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: evaluationColumns"></tr>
+              </table>
+            } @else {
+              <p class="empty">Sin calificaciones registradas en este curso.</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  }
+</section>
