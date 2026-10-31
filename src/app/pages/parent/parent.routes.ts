@@ -9,6 +9,14 @@ export const PARENT_ROUTES: Routes = [
         path: '',
         loadComponent: () => import('./home/home').then((m) => m.Home),
       },
+      {
+        path: 'seguimiento',
+        loadComponent: () => import('./seguimiento/seguimiento').then((m) => m.Seguimiento),
+      },
+      {
+        path: 'notificaciones',
+        loadComponent: () => import('./notificaciones/notificaciones').then((m) => m.Notificaciones),
+      },
     ],
   },
 ];
