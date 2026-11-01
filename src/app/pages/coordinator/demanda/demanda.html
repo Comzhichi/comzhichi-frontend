@@ -19,7 +19,7 @@
         <p class="card-subtitle">Matrículas agrupadas por idioma, nivel y horario (mayor demanda primero).</p>
         <div class="export-actions">
           <button mat-stroked-button (click)="exportExcel()" [disabled]="!hasData()">
-            <mat-icon>table_view</mat-icon> Exportar Excel
+            <mat-icon>table_view</mat-icon> Exportar CSV
           </button>
           <button mat-stroked-button (click)="exportPdf()" [disabled]="!hasData()">
             <mat-icon>picture_as_pdf</mat-icon> Exportar PDF
