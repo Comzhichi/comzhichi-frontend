@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { SectionService } from '../../../service/section.service';
+import { AuthService } from '../../../service/auth.service';
+import { markOnboardingCompleted } from '../../../util/onboarding-flag';
 import { Section } from '../../../model/section.model';
 
 interface CourseOption {
@@ -15,7 +17,14 @@ interface CourseOption {
   section: string;
   description: string;
   shift: string;
+  shifts: string[];
 }
+
+type Sufficiency =
+  | 'insufficientGrade'
+  | 'insufficientAttendance'
+  | 'insufficientBoth'
+  | 'sufficient';
 
 function shiftOf(time: string): string {
   const m = (time || '').match(/(\d{1,2}):(\d{2})/);
@@ -42,6 +51,7 @@ function shiftOf(time: string): string {
 export class Onboarding implements OnInit {
   private router = inject(Router);
   private sectionService = inject(SectionService);
+  private auth = inject(AuthService);
 
   step = signal(1);
   totalSteps = 3;
@@ -55,15 +65,28 @@ export class Onboarding implements OnInit {
   selectedCourse = signal<CourseOption | null>(null);
   sections = signal<Section[]>([]);
 
-  courses = computed<CourseOption[]>(() =>
-    this.sections().map((s) => ({
-      name: s.courseName,
-      level: s.courseLevel ?? '—',
-      section: s.groupCode,
-      description: s.teacherSpecialty ?? '—',
-      shift: shiftOf(s.startTime),
-    })),
-  );
+  courses = computed<CourseOption[]>(() => {
+    const byName = new Map<string, CourseOption>();
+    for (const s of this.sections()) {
+      const shift = shiftOf(s.startTime);
+      const existing = byName.get(s.courseName);
+      if (existing) {
+        // Un curso puede tener varias secciones: se conserva solo la primera, pero
+        // se registran todos sus turnos para que el filtro siga funcionando.
+        if (shift && !existing.shifts.includes(shift)) existing.shifts.push(shift);
+        continue;
+      }
+      byName.set(s.courseName, {
+        name: s.courseName,
+        level: s.courseLevel ?? '—',
+        section: s.groupCode,
+        description: s.teacherSpecialty ?? '—',
+        shift: shift,
+        shifts: shift ? [shift] : [],
+      });
+    }
+    return [...byName.values()];
+  });
 
   filteredCourses = computed(() => {
     const q = this.searchQuery().trim().toLowerCase();
@@ -71,7 +94,7 @@ export class Onboarding implements OnInit {
     return this.courses().filter((c) => {
       const matchName =
         !q || c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q);
-      const matchShift = !shift || c.shift === shift;
+      const matchShift = !shift || c.shifts.includes(shift);
       return matchName && matchShift;
     });
   });
@@ -79,18 +102,15 @@ export class Onboarding implements OnInit {
   // Q3
   grade = signal('');
   attendance = signal('');
-  sufficiency = signal<'insufficientGrade' | 'insufficientAttendance' | 'sufficient' | null>(null);
+  sufficiency = signal<Sufficiency | null>(null);
+
+  // Minimos de aprobacion sobre la escala 0-100.
+  private readonly gradeMin = 60;
+  private readonly attendanceMin = 70;
 
   // validation
-  submitted = signal(false);
   gradeError = signal('');
   attendanceError = signal('');
-  generalError = signal('');
-
-  progress = computed(() => {
-    if (this.step() >= 4) return 100;
-    return Math.round((this.step() / this.totalSteps) * 100);
-  });
 
   ngOnInit(): void {
     this.sectionService.getAll().subscribe({
@@ -116,6 +136,26 @@ export class Onboarding implements OnInit {
     this.selectedCourse.set(course);
   }
 
+  onGradeInput(value: string): void {
+    this.grade.set(value);
+    this.gradeError.set(this.rangeError(value, 100, 'Calificacion'));
+  }
+
+  onAttendanceInput(value: string): void {
+    this.attendance.set(value);
+    this.attendanceError.set(this.rangeError(value, 100, 'Asistencia'));
+  }
+
+  /** Devuelve un mensaje de error si el valor no es un numero entre 0 y `max`. */
+  private rangeError(value: string, max: number, label: string): string {
+    const raw = value.trim();
+    if (!raw) return '';
+    const num = Number(raw);
+    return isNaN(num) || num < 0 || num > max
+      ? `${label} invalida. Debe estar entre 0 y ${max}.`
+      : '';
+  }
+
   skipCourse(): void {
     this.selectedCourse.set(null);
     this.step.set(3);
@@ -125,98 +165,90 @@ export class Onboarding implements OnInit {
     this.step.set(3);
   }
 
-  private isQ3Valid(): boolean {
+  /** Evalua el paso 3: si los datos son coherentes y que le falta al estudiante para avanzar. */
+  private q3Check(): { valid: boolean; message: string } {
     const gRaw = this.grade().trim();
     const aRaw = this.attendance().trim();
     const suff = this.sufficiency();
 
-    if (gRaw) {
-      const gNum = Number(gRaw);
-      if (isNaN(gNum) || gNum < 0 || gNum > 20) return false;
-    }
-    if (aRaw) {
-      const aNum = Number(aRaw);
-      if (isNaN(aNum) || aNum < 0 || aNum > 100) return false;
+    if (this.rangeError(gRaw, 100, 'Calificacion') || this.rangeError(aRaw, 100, 'Asistencia')) {
+      return { valid: false, message: '' };
     }
 
-    if (gRaw && aRaw) {
-      const gNum = Number(gRaw);
-      const aNum = Number(aRaw);
-      if (gNum < 11 && suff !== 'insufficientGrade') return false;
-      if (aNum < 70 && suff !== 'insufficientAttendance') return false;
-      return true;
+    if (!gRaw && !aRaw) {
+      return suff === null
+        ? {
+            valid: false,
+            message:
+              'Ingresa tu calificacion y tu asistencia, o indica si eran suficientes para aprobar.',
+          }
+        : { valid: true, message: '' };
     }
 
-    if (suff !== null) {
-      if ((gRaw && !aRaw) || (!gRaw && aRaw)) return false;
-      return true;
+    if (!gRaw || !aRaw) {
+      return {
+        valid: false,
+        message: 'Completa ambos campos, o dejalos vacios y selecciona una opcion.',
+      };
     }
 
-    return false;
+    const gradeLow = Number(gRaw) < this.gradeMin;
+    const attendanceLow = Number(aRaw) < this.attendanceMin;
+    const expected: Sufficiency =
+      gradeLow && attendanceLow
+        ? 'insufficientBoth'
+        : gradeLow
+          ? 'insufficientGrade'
+          : attendanceLow
+            ? 'insufficientAttendance'
+            : 'sufficient';
+
+    if (suff === null) {
+      return {
+        valid: false,
+        message: 'Selecciona la opcion que describe si estos valores alcanzaron para aprobar.',
+      };
+    }
+    if (suff !== expected) {
+      return { valid: false, message: this.mismatchMessage(expected) };
+    }
+    return { valid: true, message: '' };
   }
 
+  private mismatchMessage(expected: Sufficiency): string {
+    const labels: Record<Sufficiency, string> = {
+      insufficientGrade: 'Mi calificacion final no fue la suficiente',
+      insufficientAttendance: 'Mi asistencia final no fue la suficiente',
+      insufficientBoth: 'Ni mi calificacion ni mi asistencia fueron suficientes',
+      sufficient: 'Mi calificacion y asistencia finales fueron las suficientes',
+    };
+    const detail =
+      expected === 'insufficientBoth'
+        ? `Tu calificacion esta bajo el minimo de ${this.gradeMin} y tu asistencia bajo el ${this.attendanceMin}%`
+        : expected === 'insufficientGrade'
+          ? `Tu calificacion esta bajo el minimo de ${this.gradeMin}`
+          : expected === 'insufficientAttendance'
+            ? `Tu asistencia esta bajo el minimo de ${this.attendanceMin}%`
+            : `Tus valores superan los minimos (${this.gradeMin} y ${this.attendanceMin}%)`;
+    return `${detail}. Selecciona "${labels[expected]}".`;
+  }
+
+  q3Hint = computed(() => {
+    const result = this.q3Check();
+    return result.valid ? '' : result.message;
+  });
+
   validateQ3(): boolean {
-    this.gradeError.set('');
-    this.attendanceError.set('');
-    this.generalError.set('');
-
-    const gRaw = this.grade().trim();
-    const aRaw = this.attendance().trim();
-    const suff = this.sufficiency();
-
-    if (gRaw) {
-      const gNum = Number(gRaw);
-      if (isNaN(gNum) || gNum < 0 || gNum > 20) {
-        this.gradeError.set('Calificacion invalida (0-20).');
-        return false;
-      }
-    }
-    if (aRaw) {
-      const aNum = Number(aRaw);
-      if (isNaN(aNum) || aNum < 0 || aNum > 100) {
-        this.attendanceError.set('Asistencia invalida (0-100%).');
-        return false;
-      }
-    }
-
-    if (gRaw && aRaw) {
-      const gNum = Number(gRaw);
-      const aNum = Number(aRaw);
-      if (gNum < 11 && suff !== 'insufficientGrade') {
-        this.generalError.set(
-          'Tu calificacion parece insuficiente. Confirma esa condicion en las opciones.',
-        );
-        return false;
-      }
-      if (aNum < 70 && suff !== 'insufficientAttendance') {
-        this.generalError.set(
-          'Tu asistencia parece insuficiente. Confirma esa condicion en las opciones.',
-        );
-        return false;
-      }
-      return true;
-    }
-
-    if (suff !== null) {
-      if ((gRaw && !aRaw) || (!gRaw && aRaw)) {
-        this.generalError.set('Completa ambos campos o selecciona una opcion de suficiencia.');
-        return false;
-      }
-      return true;
-    }
-
-    this.generalError.set(
-      'Indica la calificacion y asistencia o selecciona una opcion de suficiencia.',
-    );
-    return false;
+    this.gradeError.set(this.rangeError(this.grade().trim(), 100, 'Calificacion'));
+    this.attendanceError.set(this.rangeError(this.attendance().trim(), 100, 'Asistencia'));
+    return this.q3Check().valid;
   }
 
   canContinueQ3(): boolean {
-    return this.isQ3Valid();
+    return this.q3Check().valid;
   }
 
   confirmAnswers(): void {
-    this.submitted.set(true);
     if (!this.validateQ3()) return;
     const payload = {
       hadCourse: this.hadCourse(),
@@ -232,6 +264,7 @@ export class Onboarding implements OnInit {
     } catch {
       /* ignore */
     }
+    markOnboardingCompleted(this.auth.currentUser()?.email);
     this.step.set(4);
   }
 
@@ -245,6 +278,7 @@ export class Onboarding implements OnInit {
     } catch {
       /* ignore */
     }
+    markOnboardingCompleted(this.auth.currentUser()?.email);
     this.step.set(4);
   }
 

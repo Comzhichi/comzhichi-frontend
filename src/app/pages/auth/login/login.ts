@@ -9,6 +9,7 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../service/auth.service';
 import { getErrorMessage } from '../../../util/error-message';
+import { isOnboardingCompleted } from '../../../util/onboarding-flag';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +43,12 @@ export class Login {
               PARENT: '/parent',
             };
             const url = target[res.user.role] ?? '/auth/login';
-            await this.router.navigateByUrl(url);
+            // Un estudiante nuevo entra al onboarding en su primer inicio de sesión
+            const destination =
+              res.user.role === 'STUDENT' && !isOnboardingCompleted(res.user.email)
+                ? '/student/onboarding'
+                : url;
+            await this.router.navigateByUrl(destination);
           } catch (e) {
             console.error('Login error:', e);
             this.error.set(getErrorMessage(e));
