@@ -1,7 +1,7 @@
 <div class="page">
   <header class="header">
     <div class="header-left">
-      <img src="/comzhichi-logo.png" alt="Comzhichi" class="logo-img" />
+      <img src="/comzhichi-logo.png" alt="" class="logo-img" />
       <a class="brand-name" routerLink="/parent">Comzhichi</a>
     </div>
 
@@ -22,7 +22,7 @@
         <span class="student-email">{{ userEmail }}</span>
       </div>
       <div class="avatar" aria-label="Avatar del familiar">{{ initials }}</div>
-      <button matButton (click)="logout()">Salir</button>
+      <button matButton (click)="logout()" style="color:#ffffff">Salir</button>
     </div>
 
     <button class="menu-btn" type="button" (click)="toggleSidebar()" aria-label="Abrir menú lateral">
@@ -32,22 +32,11 @@
 
   <div class="body">
     <aside class="sidebar" [class.open]="sidebarOpen()" (click)="closeSidebar()">
+        <a class="side-item" routerLink="/parent/ajustes" (click)="closeSidebar()">
+          <mat-icon>settings</mat-icon>
+          <span>Ajustes</span>
+        </a>
       <nav class="sidebar-nav" (click)="$event.stopPropagation()" aria-label="Menú lateral">
-        <a class="side-item" routerLink="/parent" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeSidebar()">
-          <mat-icon>dashboard</mat-icon>
-          <span>Dashboard</span>
-        </a>
-        <a class="side-item" routerLink="/parent/seguimiento" routerLinkActive="active" (click)="closeSidebar()">
-          <mat-icon>insights</mat-icon>
-          <span>Seguimiento</span>
-        </a>
-        <a class="side-item" routerLink="/parent/notificaciones" routerLinkActive="active" (click)="closeSidebar()">
-          <mat-icon>notifications</mat-icon>
-          <span>Notificaciones</span>
-          @if (unread() > 0) {
-            <span class="badge side-badge">{{ unread() }}</span>
-          }
-        </a>
         <a class="side-item" href="#" (click)="$event.preventDefault()">
           <mat-icon>help_outline</mat-icon>
           <span>Centro de ayuda</span>
@@ -68,7 +57,7 @@
     <span class="footer-copy">© 2026 Comzhichi. Todos los derechos reservados</span>
     <nav class="footer-links" aria-label="Enlaces institucionales">
       <a href="#" (click)="$event.preventDefault()">Seguridad</a>
-      <a href="#" (click)="$event.preventDefault()">Soporte técnico</a>
+      <a href="#" (click)="$event.preventDefault()">Soporte t�cnico</a>
       <a href="#" (click)="$event.preventDefault()">Condiciones</a>
     </nav>
   </footer>

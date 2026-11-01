@@ -7,7 +7,7 @@
 .form-grid .full { grid-column: 1 / -1; }
 .form-actions { display: flex; gap: var(--sp-1); justify-content: flex-end; }
 
-.days-label { font-size: 14px; color: #666; margin-bottom: var(--sp-1); }
+.days-label { font-size: 14px; color: var(--color-text); margin-bottom: var(--sp-1); }
 .days-row   { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 
 .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--sp-2); }
@@ -16,13 +16,13 @@
   position: absolute; top: 12px; right: 12px;
   width: 32px; height: 32px; border-radius: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; background: #f3e5f5;
+  font-size: 18px; background: color-mix(in srgb, var(--color-primary) 15%, white);
 }
 .section-card mat-card-content { padding-top: var(--sp-1); font-size: 14px; }
 .section-card p { margin-bottom: var(--sp-1); }
 
 .center { display: flex; justify-content: center; padding: var(--sp-4); }
-.empty  { text-align: center; padding: var(--sp-4); color: #666; }
+.empty  { text-align: center; padding: var(--sp-4); color: var(--color-text); }
 
 /* ── Panel de matrículas ── */
 .enrollments-panel {
@@ -66,20 +66,20 @@
 
 .enrollment-row .email {
   flex: 1;
-  color: #666;
+  color: var(--color-text);
   font-size: 0.85rem;
 }
 
 .empty-msg {
-  color: #999;
+  color: var(--color-text);
   text-align: center;
   padding: var(--sp-3) 0;
 }
 
 /* ── Transferencia ── */
 .transfer-panel {
-  background: #f9f5ff;
-  border: 1px solid #ce93d8;
+  background: color-mix(in srgb, var(--color-primary) 5%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, white);
   border-radius: 6px;
   padding: var(--sp-2);
   margin: var(--sp-1) 0 var(--sp-2) 0;
@@ -116,7 +116,7 @@
 
 .vacantes {
   font-size: 12px;
-  color: #666;
+  color: var(--color-text);
   min-width: 80px;
   text-align: right;
 }

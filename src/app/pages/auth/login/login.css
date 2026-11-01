@@ -17,8 +17,8 @@
   align-items: center;
   justify-content: center;
   padding: 56px 48px;
-  background: #8C239C;
-  color: #FAFAFA;
+  background: var(--color-primary);
+  color: var(--color-bg);
   overflow: hidden;
 }
 
@@ -93,7 +93,7 @@
   font-size: 20px;
   width: 20px;
   height: 20px;
-  color: #C77E2B;
+  color: var(--color-cta);
 }
 
 /* ---------- Form panel ---------- */
@@ -103,7 +103,7 @@
   align-items: center;
   justify-content: center;
   padding: 48px 32px;
-  background: #FAFAFA;
+  background: var(--color-bg);
 }
 
 .form-card {
@@ -124,12 +124,12 @@
   margin: 0 0 4px;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-text);
 }
 
 .card-header p {
   margin: 0;
-  color: #25332F;
+  color: var(--color-extra2);
   font-size: 0.95rem;
 }
 
@@ -149,7 +149,7 @@ mat-form-field {
 }
 
 mat-form-field mat-icon[matPrefix] {
-  color: #8C239C;
+  color: var(--color-primary);
   margin-right: 4px;
 }
 
@@ -161,7 +161,7 @@ mat-form-field mat-icon[matPrefix] {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.3px;
-  background: #8C239C;
+  background: var(--color-cta) !important;
   
   transition: transform 0.15s ease;
 }
@@ -176,7 +176,7 @@ mat-form-field mat-icon[matPrefix] {
   align-items: center;
   gap: 6px;
   margin: 4px 0 0;
-  color: #F80020;
+  color: var(--color-error);
   font-size: 0.875rem;
 }
 
@@ -194,12 +194,12 @@ mat-form-field mat-icon[matPrefix] {
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid #F0F0F0;
-  color: #25332F;
+  color: var(--color-extra2);
   font-size: 0.9rem;
 }
 
 .card-footer a {
-  color: #8C239C;
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
 }

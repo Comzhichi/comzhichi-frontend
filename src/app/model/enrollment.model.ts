@@ -6,7 +6,7 @@ export interface Enrollment {
   sectionId: number;
   sectionGroupCode: string;
   courseName: string;
-  enrollmentDate: string;
+  enrollmentDate: string; 
   status: 'ACTIVE' | 'APPROVED' | 'DROPPED' | 'FAILED';
   teacherName?: string;
   schedule?: string;

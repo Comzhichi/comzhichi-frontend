@@ -1,0 +1,62 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Demanda de idiomas, niveles y horarios</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (error()) {
+    <div class="empty"><p>{{ error() }}</p></div>
+  } @else if (!hasData()) {
+    <div class="empty">
+      <mat-icon class="empty-icon">bar_chart</mat-icon>
+      <p>No hay información disponible para generar resultados.</p>
+    </div>
+  } @else {
+    <mat-card class="card">
+      <div class="card-header">
+        <h2 class="card-title">Reporte de demanda</h2>
+        <p class="card-subtitle">Matrículas agrupadas por idioma, nivel y horario (mayor demanda primero).</p>
+        <div class="export-actions">
+          <button mat-stroked-button (click)="exportExcel()" [disabled]="!hasData()">
+            <mat-icon>table_view</mat-icon> Exportar Excel
+          </button>
+          <button mat-stroked-button (click)="exportPdf()" [disabled]="!hasData()">
+            <mat-icon>picture_as_pdf</mat-icon> Exportar PDF
+          </button>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Idioma</th>
+              <th>Nivel</th>
+              <th>Horario</th>
+              <th>Secciones</th>
+              <th>Matriculados</th>
+              <th>Vacantes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of rows(); track r.language + r.level + r.schedule) {
+              <tr>
+                <td>
+                  <span class="flag-inline" [style.background-color]="r.language | languageColor">
+                    <img [src]="r.language | languageFlag" alt="" />
+                  </span>
+                  {{ r.language }}
+                </td>
+                <td>{{ r.level }}</td>
+                <td>{{ r.schedule }}</td>
+                <td>{{ r.sections }}</td>
+                <td>{{ r.enrolled }}</td>
+                <td>{{ r.availableVacancies }} / {{ r.totalVacancies }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </mat-card>
+  }
+</div>

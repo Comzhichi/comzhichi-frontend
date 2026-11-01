@@ -13,7 +13,7 @@ const COLORS: Record<string, string> = {
 @Pipe({ name: 'languageColor', standalone: true })
 export class LanguageColorPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
-    if (!value) return '#f3e5f5';
+    if (!value) return 'color-mix(in srgb, var(--color-primary) 15%, white)';
     const key = value.trim().toLowerCase();
     let color = COLORS[key];
     if (!color) {
@@ -21,6 +21,6 @@ export class LanguageColorPipe implements PipeTransform {
         if (key.includes(k)) { color = COLORS[k]; break; }
       }
     }
-    return color ?? '#f3e5f5';
+    return color ?? 'color-mix(in srgb, var(--color-primary) 15%, white)';
   }
 }

@@ -2,18 +2,48 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
 
+/* Normalización: títulos de página alineados en todos los layouts */
+/* Normalizaci�n: solo inicio vertical de los t�tulos */
+.dash-header, .page-header, .card-header, .card-title-row {
+  padding-top: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.page-header h1, .dash-header .dash-title, .card-header .card-title, .card-title-row h2,
+.mat-mdc-card-title, h1, h2, .dash-title, .card-title, .section-title {
+  margin-top: 0 !important;
+  font-size: 24px !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+
+/* Alineación unificada para TODAS las páginas/layouts */
+.dashboard, .horarios-wrap, .matriculas-wrap, .onboarding-wrap, .page, .page-wrap, .prereq-wrap {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+.dashboard .card, .horarios-wrap .card, .matriculas-wrap .card, .onboarding-wrap .card,
+.page .card, .page-wrap .card, .prereq-wrap .card {
+  width: 100% !important;
+  margin-inline: 0 !important;
+  box-sizing: border-box !important;
+}
+
 /* El logo se mantiene circular */
 .logo-img { border-radius: 50% !important; }
 
 :root {
   --color-primary:     #8C239C;
   --color-secondary:   #229C78;
-  --color-error:       #800020;
-  --color-estado:      #C77E2B;
+  --color-error:       #F80020;
+  --color-cta:      #C77E2B;
   --color-extra1:      #422747;
   --color-extra2:      #25332F;
   --color-text:        #212121;
-  --color-bg:          #FAFAFA;
+  --color-bg:          #F5F0E8;
 
   /* Sin redondeado en ningún elemento */
   --mat-sys-corner-extra-large: 0;
@@ -41,6 +71,26 @@
 
 button, .mat-mdc-button, .mat-mdc-flat-button, .mat-mdc-raised-button, .mat-mdc-icon-button, .mat-mdc-outlined-button {
   
+}
+
+/* Botones de acción principal (CTA) */
+.mat-mdc-flat-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  --mdc-filled-button-container-color: var(--color-cta) !important;
+  --mdc-filled-button-label-text-color: #ffffff !important;
+  background-color: var(--color-cta) !important;
+}
+
+/* Sin sombras, borde gris claro en tarjetas */
+.mat-mdc-card, .card, mat-card {
+  box-shadow: none !important;
+  border: 1px solid #D9D9D9 !important;
+}
+body {
+  background-color: var(--color-bg) !important;
+  font-family: 'Roboto', sans-serif;
+  color: var(--color-text);
 }
 
 .flag-circle img {

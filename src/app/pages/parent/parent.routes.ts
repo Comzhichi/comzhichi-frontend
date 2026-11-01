@@ -17,6 +17,10 @@ export const PARENT_ROUTES: Routes = [
         path: 'notificaciones',
         loadComponent: () => import('./notificaciones/notificaciones').then((m) => m.Notificaciones),
       },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('../settings/settings').then((m) => m.Settings),
+      },
     ],
   },
 ];

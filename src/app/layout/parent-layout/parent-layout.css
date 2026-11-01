@@ -1,13 +1,13 @@
 :host {
-  --cz-purple: #8e24aa;
-  --cz-purple-dark: #45234f;
-  --cz-purple-deep: #2a1230;
-  --cz-purple-light: #f5eaf8;
-  --cz-purple-soft: #fceeff;
+  --cz-purple: var(--color-primary);
+  --cz-purple-dark: var(--color-extra1);
+  --cz-purple-deep: var(--color-extra1);
+  --cz-purple-light: color-mix(in srgb, var(--color-primary) 8%, white);
+  --cz-purple-soft: color-mix(in srgb, var(--color-primary) 6%, white);
   --cz-bg: #f7f7f9;
   --cz-white: #ffffff;
-  --cz-text: #263238;
-  --cz-text-secondary: #687078;
+  --cz-text: var(--color-text);
+  --cz-text-secondary: var(--color-text);
   --cz-border: #e4e4e7;
   --cz-header-height: 80px;
   --cz-sidebar-width: 210px;
@@ -17,7 +17,7 @@
   font-family: 'Roboto', 'Inter', sans-serif;
   color: var(--cz-text);
   background:
-    #faf8fc;
+    color-mix(in srgb, var(--color-primary) 3%, white);
 }
 
 .page {
@@ -31,7 +31,7 @@
 .header {
   height: var(--cz-header-height);
   background:
-    #9c27b0;
+    var(--color-primary);
   color: var(--cz-white);
   display: flex;
   align-items: center;
@@ -169,7 +169,7 @@
   width: 42px;
   height: 42px;
   border-radius: 0;
-  background: #fceeff;
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
   color: var(--cz-purple);
   display: flex;
   align-items: center;
@@ -282,7 +282,7 @@
 }
 
 .side-item.active {
-  background: #fceeff;
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
   color: var(--cz-purple);
   font-weight: 600;
   
@@ -299,7 +299,7 @@
 /* ---------- Footer ---------- */
 .footer {
   height: var(--cz-footer-height);
-  background: #45234f;
+  background: var(--color-extra1);
   color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
@@ -413,6 +413,7 @@
 
   .sidebar {
     position: fixed;
+    display: block;
     top: var(--cz-header-height);
     left: 0;
     bottom: 0;
@@ -451,7 +452,7 @@
   min-width: 18px;
   height: 18px;
   padding: 0 6px;
-  background: #fceeff;
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
   color: var(--cz-purple);
   font-size: 11px;
   font-weight: 700;
@@ -464,3 +465,6 @@
   background: var(--cz-purple);
   color: var(--cz-white);
 }
+
+
+

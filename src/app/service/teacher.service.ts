@@ -13,6 +13,10 @@ export class TeacherService {
     return this.http.get<Teacher[]>(`${this.api}/teachers`);
   }
 
+  deactivate(id: number): Observable<Teacher> {
+    return this.http.patch<Teacher>(`${this.api}/teachers/${id}/deactivate`, {});
+  }
+
   getEligible(params: { courseId?: number | null; dayOfWeek?: string; startTime?: string; endTime?: string }): Observable<Teacher[]> {
     const p: Record<string, string> = {};
     if (params.courseId) p['courseId'] = String(params.courseId);

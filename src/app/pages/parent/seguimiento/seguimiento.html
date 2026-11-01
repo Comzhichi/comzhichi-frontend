@@ -24,7 +24,7 @@
         <mat-label>Estudiante</mat-label>
         <mat-select [value]="selectedStudentId()" (selectionChange)="selectStudent($event.value)">
           @for (s of students(); track s.id) {
-            <mat-option [value]="s.studentId">{{ s.studentFullName }} ({{ s.relationship }})</mat-option>
+            <mat-option [value]="s.studentId">{{ s.studentFullName }}{{ s.relationship ? ' (' + s.relationship + ')' : '' }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -41,6 +41,24 @@
         </mat-form-field>
       }
     </div>
+
+    @if (hasProgress()) {
+      <div class="progress-grid">
+        @for (p of languageSummaries(); track p.language) {
+          <mat-card class="progress-card">
+            <mat-card-header>
+              <mat-card-title>{{ p.language }}</mat-card-title>
+              <mat-card-subtitle>{{ p.status }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p><strong>Nivel actual:</strong> {{ p.level }}</p>
+              <p><strong>Curso actual:</strong> {{ p.currentCourse }}</p>
+              <p><strong>Avance:</strong> {{ p.progress }}%</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
 
     @if (loadingRecords()) {
       <div class="center"><mat-spinner diameter="40" /></div>

@@ -7,4 +7,6 @@
 .teacher-card mat-card-content { padding-top: var(--sp-1); font-size: 14px; }
 
 .center { display: flex; justify-content: center; padding: var(--sp-4); }
-.empty  { text-align: center; padding: var(--sp-4); color: #666; }
+.empty  { text-align: center; padding: var(--sp-4); color: var(--color-text); }
+.status { font-size: 13px; font-weight: 600; color: var(--color-secondary); margin: 4px 0 0; }
+.status.inactive { color: var(--color-error); }

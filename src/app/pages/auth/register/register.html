@@ -70,6 +70,11 @@
             <mat-icon matPrefix>phone</mat-icon>
             <input matInput [formField]="registerForm.phoneContact" />
           </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Email del estudiante a vincular</mat-label>
+            <mat-icon matPrefix>school</mat-icon>
+            <input matInput type="email" [formField]="registerForm.studentEmail" />
+          </mat-form-field>
         }
         @if (error()) {
           <p class="error"><mat-icon>error_outline</mat-icon> {{ error() }}</p>

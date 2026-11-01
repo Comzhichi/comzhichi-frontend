@@ -26,13 +26,13 @@ body {
 
 // Paleta Comzhichi (negocio: academia de idiomas)
 :root {
-  --mat-sys-primary: #8C239C;
-  --mat-sys-secondary: #229C78;
-  --mat-sys-tertiary: #C77E2B;
-  --mat-sys-error: #F80020;
-  --mat-sys-on-surface: #212121;
-  --mat-sys-surface: #FAFAFA;
-  --cz-extra-1: #422747;
-  --cz-extra-2: #25332F;
-  --cz-estado: #C77E2B;
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-secondary: var(--color-secondary);
+  --mat-sys-tertiary: var(--color-cta);
+  --mat-sys-error: var(--color-error);
+  --mat-sys-on-surface: var(--color-text);
+  --mat-sys-surface: var(--color-bg);
+  --cz-extra-1: var(--color-extra1);
+  --cz-extra-2: var(--color-extra2);
+  --cz-cta: var(--color-cta);
 }

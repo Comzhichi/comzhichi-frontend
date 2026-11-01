@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Parent, StudentParentLink } from '../model/parent.model';
 
@@ -16,12 +16,6 @@ export class ParentService {
 
   /** Estudiantes vinculados al familiar autenticado. */
   getMyStudents(): Observable<StudentParentLink[]> {
-    return this.getMe().pipe(
-      switchMap((parent) =>
-        this.http
-          .get<StudentParentLink[]>(`${this.api}/student-parents`)
-          .pipe(map((links) => links.filter((l) => l.parentId === parent.id))),
-      ),
-    );
+    return this.http.get<StudentParentLink[]>(`${this.api}/parents/me/students`);
   }
 }

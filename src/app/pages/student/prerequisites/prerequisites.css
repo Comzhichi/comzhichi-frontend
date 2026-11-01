@@ -19,7 +19,7 @@
   align-items: center;
   gap: 12px;
   padding: 32px 16px;
-  color: #687078;
+  color: var(--color-text);
   text-align: center;
 }
 
@@ -27,5 +27,5 @@
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: #8e24aa;
+  color: var(--color-primary);
 }

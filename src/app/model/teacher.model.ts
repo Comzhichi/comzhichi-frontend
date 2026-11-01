@@ -4,4 +4,5 @@ export interface Teacher {
   userFullName: string;
   userEmail: string;
   specialty: string;
+  active?: boolean;
 }

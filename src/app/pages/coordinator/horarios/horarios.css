@@ -19,7 +19,7 @@
 
 .card-subtitle {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -37,12 +37,12 @@
 
 .empty-msg {
   text-align: center;
-  color: #999;
+  color: var(--color-text);
   padding: var(--sp-3) 0;
 }
 
 .alert.error {
-  background: #fdecea;
+  background: color-mix(in srgb, var(--color-error) 5%, white);
   color: var(--color-error);
   border-radius: 6px;
   padding: var(--sp-2);
@@ -73,7 +73,7 @@
   vertical-align: middle;
 }
 
-.data-table tr:hover td { background: #f9f5ff; }
+.data-table tr:hover td { background: color-mix(in srgb, var(--color-primary) 5%, white); }
 
 .flag-inline {
   display: inline-flex;
