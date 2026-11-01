@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import * as XLSX from 'xlsx';
 import { SectionService } from '../../../service/section.service';
 import { CourseService } from '../../../service/course.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
@@ -103,26 +103,19 @@ export class Demanda implements OnInit {
 
   exportExcel(): void {
     if (!this.hasData()) return;
-    const headers = ['Idioma', 'Nivel', 'Horario', 'Secciones', 'Matriculados', 'Vacantes disponibles', 'Vacantes totales'];
-    const lines = [headers.join(',')];
-    for (const r of this.rows()) {
-      lines.push([
-        r.language,
-        r.level,
-        r.schedule,
-        r.sections,
-        r.enrolled,
-        r.availableVacancies,
-        r.totalVacancies,
-      ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','));
-    }
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'demanda.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    const data = this.rows().map((r) => ({
+      Idioma: r.language,
+      Nivel: r.level,
+      Horario: r.schedule,
+      Secciones: r.sections,
+      Matriculados: r.enrolled,
+      'Vacantes disponibles': r.availableVacancies,
+      'Vacantes totales': r.totalVacancies,
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Demanda');
+    XLSX.writeFile(wb, 'demanda.xlsx');
   }
 
   exportPdf(): void {
