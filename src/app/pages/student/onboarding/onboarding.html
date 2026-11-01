@@ -1,8 +1,5 @@
 <div class="onboarding-wrap">
   <section class="card" aria-labelledby="onboarding-title">
-    <div class="progress-track" aria-hidden="true">
-      <div class="progress-bar" [style.width.%]="progress()"></div>
-    </div>
     <p class="progress-label">
       @if (step() >= 4) {
         Completado
@@ -59,13 +56,13 @@
       <div class="filters">
         <mat-form-field appearance="outline" class="full">
           <mat-label>Buscar por nombre del curso</mat-label>
-          <mat-icon matPrefix>search</mat-icon>
           <input
             matInput
             type="text"
             [value]="searchQuery()"
             (input)="searchQuery.set($any($event.target).value)"
           />
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full">
@@ -106,7 +103,7 @@
       }
 
       <div class="actions dual">
-        <button matButton="outlined" class="skip-btn" type="button" (click)="skipCourse()">
+        <button matButton="filled" class="skip-btn" type="button" (click)="skipCourse()">
           No lo recuerdo
         </button>
         <button
@@ -142,28 +139,28 @@
 
       <div class="grade-fields">
         <mat-form-field appearance="outline" class="full">
-          <mat-label>Calificación final</mat-label>
+          <mat-label>Calificación final (entre 0 y 100)</mat-label>
           <input
             matInput
             type="number"
             [value]="grade()"
-            (input)="grade.set($any($event.target).value)"
+            (input)="onGradeInput($any($event.target).value)"
           />
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">
-          <mat-label>Porcentaje de asistencia final</mat-label>
+          <mat-label>Porcentaje de asistencia final (entre 0 y 100)</mat-label>
           <input
             matInput
             type="number"
             [value]="attendance()"
-            (input)="attendance.set($any($event.target).value)"
+            (input)="onAttendanceInput($any($event.target).value)"
           />
         </mat-form-field>
       </div>
-      @if (submitted() && gradeError()) {
+      @if (gradeError()) {
         <p class="field-error">{{ gradeError() }}</p>
       }
-      @if (submitted() && attendanceError()) {
+      @if (attendanceError()) {
         <p class="field-error">{{ attendanceError() }}</p>
       }
 
@@ -181,6 +178,10 @@
           <mat-radio-button value="insufficientAttendance"></mat-radio-button>
           <span class="answer-label">Mi asistencia final no fue la suficiente</span>
         </label>
+        <label class="answer-card" [class.selected]="sufficiency() === 'insufficientBoth'">
+          <mat-radio-button value="insufficientBoth"></mat-radio-button>
+          <span class="answer-label">Ni mi calificación ni mi asistencia fueron suficientes</span>
+        </label>
         <label class="answer-card" [class.selected]="sufficiency() === 'sufficient'">
           <mat-radio-button value="sufficient"></mat-radio-button>
           <span class="answer-label"
@@ -189,8 +190,8 @@
         </label>
       </mat-radio-group>
 
-      @if (submitted() && generalError()) {
-        <p class="field-error general">{{ generalError() }}</p>
+      @if (q3Hint()) {
+        <p class="field-hint">{{ q3Hint() }}</p>
       }
       <div class="actions">
         <button

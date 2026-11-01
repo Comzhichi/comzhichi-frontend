@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 import { Role } from '../model/auth.model';
+import { isOnboardingCompleted } from '../util/onboarding-flag';
 
 export function roleGuard(allowedRole: Role): CanActivateFn {
   return () => {
@@ -23,6 +24,30 @@ export function roleGuard(allowedRole: Role): CanActivateFn {
         PARENT: '/parent',
       };
       router.navigate([homeMap[role!] ?? '/auth/login']);
+      return false;
+    }
+
+    return true;
+  };
+}
+
+/**
+ * El onboarding solo se puede completar la primera vez que una cuenta de estudiante
+ * inicia sesión. Una vez completado, la ruta vuelve al dashboard.
+ */
+export function studentOnboardingGuard(): CanActivateFn {
+  return () => {
+    const auth = inject(AuthService);
+    const router = inject(Router);
+    const user = auth.currentUser();
+
+    if (!auth.isAuthenticated() || user?.role !== 'STUDENT') {
+      router.navigate(['/auth/login']);
+      return false;
+    }
+
+    if (isOnboardingCompleted(user?.email)) {
+      router.navigate(['/student']);
       return false;
     }
 

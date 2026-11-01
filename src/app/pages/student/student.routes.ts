@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { studentOnboardingGuard } from '../../guards/auth.guard';
 import { StudentLayout } from '../../layout/student-layout/student-layout';
 export const STUDENT_ROUTES: Routes = [
   {
@@ -11,6 +12,7 @@ export const STUDENT_ROUTES: Routes = [
       },
       {
         path: 'onboarding',
+        canActivate: [studentOnboardingGuard],
         loadComponent: () => import('./onboarding/onboarding').then((m) => m.Onboarding),
       },
       {

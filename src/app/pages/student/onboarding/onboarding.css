@@ -30,23 +30,6 @@
 }
 
 /* ---------- Progress ---------- */
-.progress-track {
-  height: 8px;
-  border-radius: 0;
-  background-color: color-mix(in srgb, var(--color-primary) 6%, white);
-  overflow: hidden;
-  margin-bottom: 8px;
-  position: relative;
-  z-index: 1;
-}
-
-.progress-bar {
-  height: 100%;
-  border-radius: 0;
-  background: var(--color-primary);
-  transition: width 0.3s ease;
-}
-
 .progress-label {
   font-size: 12px;
   color: var(--color-text);
@@ -146,8 +129,7 @@
 }
 
 .answer-card:focus-within {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .answer-label {
@@ -309,12 +291,14 @@
   height: 44px;
   font-weight: 600;
   border-radius: 0;
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  background: var(--color-cta);
+  color: #ffffff;
 }
 
 .skip-btn:hover {
-  background-color: color-mix(in srgb, var(--color-primary) 8%, white);
+  background: var(--color-cta);
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 /* ---------- Responsive ---------- */
@@ -368,10 +352,14 @@
   z-index: 1;
 }
 
-.field-error.general {
+.field-hint {
+  color: var(--color-cta);
+  font-size: 13px;
+  font-weight: 500;
   text-align: center;
   margin: 0 0 16px;
-  font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 720px) {
