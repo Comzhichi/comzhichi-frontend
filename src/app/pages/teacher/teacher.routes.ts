@@ -26,6 +26,10 @@ export const TEACHER_ROUTES: Routes = [
         path: 'progreso',
         loadComponent: () => import('./progreso/progreso').then((m) => m.Progreso),
       },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('../settings/settings').then((m) => m.Settings),
+      },
     ],
   },
 ];

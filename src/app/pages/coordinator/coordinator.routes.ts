@@ -26,6 +26,14 @@ export const COORDINATOR_ROUTES: Routes = [
         path: 'horarios',
         loadComponent: () => import('./horarios/horarios').then((m) => m.Horarios),
       },
+      {
+        path: 'demanda',
+        loadComponent: () => import('./demanda/demanda').then((m) => m.Demanda),
+      },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('../settings/settings').then((m) => m.Settings),
+      },
     ],
   },
 ];

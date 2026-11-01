@@ -13,8 +13,10 @@ import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { ParentService } from '../../../service/parent.service';
 import { EnrollmentService } from '../../../service/enrollment.service';
 import { AcademicService } from '../../../service/academic.service';
+import { CourseService } from '../../../service/course.service';
 import { StudentParentLink } from '../../../model/parent.model';
 import { Enrollment } from '../../../model/enrollment.model';
+import { Course } from '../../../model/course.model';
 import { Attendance, Evaluation } from '../../../model/academic.model';
 
 /** Registros académicos de una matrícula (un curso en un ciclo). */
@@ -61,6 +63,7 @@ export class Seguimiento implements OnInit {
   private parentService = inject(ParentService);
   private enrollmentService = inject(EnrollmentService);
   private academic = inject(AcademicService);
+  private courseService = inject(CourseService);
 
   loading = signal(true);
   loadingRecords = signal(false);
@@ -69,6 +72,7 @@ export class Seguimiento implements OnInit {
   students = signal<StudentParentLink[]>([]);
   selectedStudentId = signal<number | null>(null);
   records = signal<CourseRecord[]>([]);
+  courses = signal<Course[]>([]);
   courseFilter = signal<string>('ALL');
 
   attendanceColumns = ['date', 'status', 'observation'];
@@ -83,6 +87,60 @@ export class Seguimiento implements OnInit {
       : this.records().filter((r) => r.enrollment.courseName === filter);
   });
 
+  private courseMap = computed(() => {
+    const m = new Map<number, Course>();
+    for (const c of this.courses()) m.set(c.id, c);
+    return m;
+  });
+
+  private courseByName = computed(() => {
+    const m = new Map<string, Course>();
+    for (const c of this.courses()) m.set(c.name.trim().toLowerCase(), c);
+    return m;
+  });
+
+  /** Resumen de progreso por idioma del estudiante seleccionado. */
+  languageSummaries = computed(() => {
+    const enrollments = this.records().map((r) => r.enrollment);
+    if (enrollments.length === 0) return [];
+    const langs = new Set<string>();
+    for (const e of enrollments) {
+      const c = this.courseByName().get(e.courseName.trim().toLowerCase());
+      const lang = (c?.language || '').trim();
+      if (lang) langs.add(lang);
+    }
+    const result: { language: string; level: string; currentCourse: string; progress: number; status: string }[] = [];
+    for (const lang of langs) {
+      const enr = enrollments.filter((e) => {
+        const c = this.courseByName().get(e.courseName.trim().toLowerCase());
+        return (c?.language || '').trim().toLowerCase() === lang.toLowerCase();
+      });
+      const approved = enr.filter((e) => e.status === 'APPROVED');
+      const current = enr.length
+        ? [...enr].sort((a, b) => (b.enrollmentDate || '').localeCompare(a.enrollmentDate || ''))[0]
+        : null;
+      const currentCourse = current ? this.courseByName().get(current.courseName.trim().toLowerCase()) : null;
+      const langCourses = this.courses().filter((c) => c.language.trim().toLowerCase() === lang.toLowerCase());
+      const approvedIds = new Set(approved.map((e) => this.courseByName().get(e.courseName.trim().toLowerCase())?.id).filter((x): x is number => !!x));
+      const progress = langCourses.length ? Math.round((approvedIds.size / langCourses.length) * 100) : 0;
+      const hasActive = enr.some((e) => e.status === 'ACTIVE');
+      const allApproved = langCourses.length > 0 && approvedIds.size >= langCourses.length;
+      let status = 'En curso';
+      if (allApproved) status = 'Nivel completado';
+      else if (!hasActive && approved.length === 0) status = 'Pendiente de evaluación';
+      result.push({
+        language: lang,
+        level: currentCourse ? currentCourse.level : (approved.length ? this.courseByName().get(approved[approved.length - 1].courseName.trim().toLowerCase())?.level ?? '—' : '—'),
+        currentCourse: current ? current.courseName : '—',
+        progress,
+        status,
+      });
+    }
+    return result;
+  });
+
+  hasProgress = computed(() => this.languageSummaries().length > 0);
+
   /** true cuando el alumno no tiene ninguna asistencia ni calificación registrada. */
   hasNoAcademicData = computed(
     () =>
@@ -91,6 +149,10 @@ export class Seguimiento implements OnInit {
   );
 
   ngOnInit(): void {
+    this.courseService.getAll().subscribe({
+      next: (data) => this.courses.set(data),
+      error: () => this.courses.set([]),
+    });
     this.parentService.getMyStudents().subscribe({
       next: (links) => {
         this.students.set(links);

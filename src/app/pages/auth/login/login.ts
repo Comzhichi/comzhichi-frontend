@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../service/auth.service';
-import { messageOf } from '../../../util/error-message';
+import { getErrorMessage } from '../../../util/error-message';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +44,8 @@ export class Login {
             const url = target[res.user.role] ?? '/auth/login';
             await this.router.navigateByUrl(url);
           } catch (e) {
-            this.error.set(messageOf(e));
+            console.error('Login error:', e);
+            this.error.set(getErrorMessage(e));
           }
         },
         onInvalid: () => {

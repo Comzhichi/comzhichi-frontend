@@ -29,6 +29,14 @@ export const STUDENT_ROUTES: Routes = [
         path: 'progreso',
         loadComponent: () => import('./progreso/progreso').then((m) => m.Progreso),
       },
+      {
+        path: 'notificaciones',
+        loadComponent: () => import('./notificaciones/notificaciones').then((m) => m.Notificaciones),
+      },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('../settings/settings').then((m) => m.Settings),
+      },
     ],
   },
 ];

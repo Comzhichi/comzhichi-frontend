@@ -17,7 +17,15 @@
           </mat-card-header>
           <mat-card-content>
             <p>{{ t.userEmail }}</p>
+            <p class="status" [class.inactive]="!isActive(t)">
+              {{ isActive(t) ? 'Activo' : 'Dado de baja' }}
+            </p>
           </mat-card-content>
+          <mat-card-actions>
+            <button mat-stroked-button color="warn" (click)="deactivate(t)" [disabled]="!isActive(t)">
+              Dar de baja
+            </button>
+          </mat-card-actions>
         </mat-card>
       }
     </div>

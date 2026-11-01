@@ -39,6 +39,7 @@ export class Register {
     specialty: '',
     department: '',
     phoneContact: '',
+    studentEmail: '',
   });
   registerForm = form(
     this.registerModel,
@@ -64,6 +65,7 @@ export class Register {
                 specialty: m.specialty || undefined,
                 department: m.department || undefined,
                 phoneContact: m.phoneContact || undefined,
+                 studentEmail: m.studentEmail || undefined,
               }),
             );
             this.snackBar.open('Cuenta creada. Ahora inicia sesión', 'Cerrar', { duration: 4000 });

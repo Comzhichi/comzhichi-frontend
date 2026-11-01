@@ -1,15 +1,15 @@
 :host {
-  --cz-purple: #8C239C;
-  --cz-purple-dark: #422747;
-  --cz-purple-deep: #2a1230;
-  --cz-purple-light: #f3e5f5;
-  --cz-purple-soft: #f3e5f5;
-  --cz-secondary: #229C78;
-  --cz-cta: #C77E2B;
+  --cz-purple: var(--color-primary);
+  --cz-purple-dark: var(--color-extra1);
+  --cz-purple-deep: var(--color-extra1);
+  --cz-purple-light: color-mix(in srgb, var(--color-primary) 15%, white);
+  --cz-purple-soft: color-mix(in srgb, var(--color-primary) 15%, white);
+  --cz-secondary: var(--color-secondary);
+  --cz-cta: var(--color-cta);
   --cz-bg: #f7f7f9;
   --cz-white: #ffffff;
-  --cz-text: #263238;
-  --cz-text-secondary: #687078;
+  --cz-text: var(--color-text);
+  --cz-text-secondary: var(--color-text);
   --cz-border: #e4e4e7;
   --cz-header-height: 80px;
   --cz-sidebar-width: 210px;
@@ -19,7 +19,7 @@
   font-family: 'Roboto', 'Inter', sans-serif;
   color: var(--cz-text);
   background:
-    #faf8fc;
+    color-mix(in srgb, var(--color-primary) 3%, white);
 }
 
 .page {
@@ -33,7 +33,7 @@
 .header {
   height: var(--cz-header-height);
   background:
-    #8C239C;
+    var(--color-primary);
   color: var(--cz-white);
   display: flex;
   align-items: center;
@@ -165,7 +165,7 @@
   width: 42px;
   height: 42px;
   border-radius: 0;
-  background: #f3e5f5;
+  background: color-mix(in srgb, var(--color-primary) 15%, white);
   color: var(--cz-purple);
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@
 }
 
 .side-item.active {
-  background: #f3e5f5;
+  background: color-mix(in srgb, var(--color-primary) 15%, white);
   color: var(--cz-purple);
   font-weight: 600;
   
@@ -295,7 +295,7 @@
 /* ---------- Footer ---------- */
 .footer {
   height: var(--cz-footer-height);
-  background: #422747;
+  background: var(--color-extra1);
   color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
@@ -409,6 +409,7 @@
 
   .sidebar {
     position: fixed;
+    display: block;
     top: var(--cz-header-height);
     left: 0;
     bottom: 0;
@@ -435,3 +436,6 @@
     gap: 12px;
   }
 }
+
+
+

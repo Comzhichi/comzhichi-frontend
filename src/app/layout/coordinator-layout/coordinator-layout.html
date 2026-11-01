@@ -1,7 +1,7 @@
 <div class="page">
   <header class="header">
     <div class="header-left">
-      <img src="/comzhichi-logo.png" alt="Comzhichi" class="logo-img" />
+      <img src="/comzhichi-logo.png" alt="" class="logo-img" />
       <a class="brand-name" routerLink="/coordinator">Comzhichi</a>
     </div>
 
@@ -9,13 +9,9 @@
       <a class="nav-link" routerLink="/coordinator/courses">Cursos</a>
       <a class="nav-link" routerLink="/coordinator/sections">Secciones</a>
       <a class="nav-link" routerLink="/coordinator/horarios">Horarios</a>
+      <a class="nav-link" routerLink="/coordinator/demanda">Demanda</a>
       <a class="nav-link" routerLink="/coordinator/teachers">Docentes</a>
     </nav>
-
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-      <mat-label>Buscar cursos por nombre</mat-label>
-      <input matInput type="search" />
-    </mat-form-field>
 
     <div class="header-right">
       <div class="student-info">
@@ -24,7 +20,7 @@
       </div>
       <div class="avatar" aria-label="Avatar del coordinador">{{ initials }}</div>
       <a class="onboarding-link" routerLink="/coordinator">Panel</a>
-      <button matButton (click)="logout()">Salir</button>
+      <button matButton (click)="logout()" style="color:#ffffff">Salir</button>
     </div>
 
     <button
@@ -44,7 +40,7 @@
           <mat-icon>dashboard</mat-icon>
           <span>Dashboard</span>
         </a>
-        <a class="side-item" href="#" (click)="$event.preventDefault()">
+        <a class="side-item" routerLink="/coordinator/ajustes" (click)="closeSidebar()">
           <mat-icon>settings</mat-icon>
           <span>Ajustes</span>
         </a>
@@ -68,7 +64,7 @@
     <span class="footer-copy">© 2026 Comzhichi. Todos los derechos reservados</span>
     <nav class="footer-links" aria-label="Enlaces institucionales">
       <a href="#" (click)="$event.preventDefault()">Seguridad</a>
-      <a href="#" (click)="$event.preventDefault()">Soporte técnico</a>
+      <a href="#" (click)="$event.preventDefault()">Soporte t�cnico</a>
       <a href="#" (click)="$event.preventDefault()">Condiciones</a>
     </nav>
   </footer>

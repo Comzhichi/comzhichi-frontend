@@ -1,8 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 
@@ -11,8 +9,6 @@ import { AuthService } from '../../service/auth.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
     MatIconModule,
   ],

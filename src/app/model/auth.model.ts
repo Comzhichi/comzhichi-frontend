@@ -13,6 +13,7 @@ export interface UserRequest {
   specialty?: string;
   department?: string;
   phoneContact?: string;
+  studentEmail?: string;
 }
 
 export interface UserResponse {

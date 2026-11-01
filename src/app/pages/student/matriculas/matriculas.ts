@@ -449,8 +449,6 @@ export class Matriculas implements OnInit {
     return this.courseMap().get(s.courseId)?.level || s.courseLevel || '�';
   }
 
-<<<<<<< HEAD
-=======
   levelCategory(level: string | null | undefined): string {
     const l = (level || '').toLowerCase().trim();
     if (l === 'a1' || l === 'a2' || l.includes('básico') || l.includes('basico')) return 'Básico';
@@ -458,8 +456,6 @@ export class Matriculas implements OnInit {
     if (l === 'c1' || l === 'c2' || l.includes('avanzado')) return 'Avanzado';
     return level || '';
   }
-
->>>>>>> feature/validaciones1-10
   descriptionOfSection(s: Section): string {
     return this.courseMap().get(s.courseId)?.description || s.courseDescription || '�';
   }
