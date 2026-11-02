@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -139,6 +139,7 @@ export class Settings implements OnInit {
   private auth = inject(AuthService);
   private http = inject(HttpClient);
   private snack = inject(MatSnackBar);
+  private cdr = inject(ChangeDetectorRef);
 
   user = this.auth.currentUser();
   profile: BackendProfile | null = null;
@@ -162,16 +163,19 @@ export class Settings implements OnInit {
     if (!endpoint) {
       this.loadingProfile = false;
       this.profileError = 'No se pudo determinar el perfil del usuario.';
+      this.cdr.markForCheck();
       return;
     }
     this.http.get<BackendProfile>(`${environment.apiUrl}${endpoint}`).subscribe({
       next: (data) => {
         this.profile = data;
         this.loadingProfile = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.profileError = err?.error?.message || 'No se pudo cargar el perfil desde el backend.';
         this.loadingProfile = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -197,18 +201,22 @@ export class Settings implements OnInit {
 
     if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
       this.passwordError = 'Todos los campos son obligatorios.';
+      this.cdr.markForCheck();
       return;
     }
     if (this.newPassword.length < 6) {
       this.passwordError = 'La nueva contraseña debe tener al menos 6 caracteres.';
+      this.cdr.markForCheck();
       return;
     }
     if (this.newPassword !== this.confirmPassword) {
       this.passwordError = 'Las contraseñas no coinciden.';
+      this.cdr.markForCheck();
       return;
     }
 
     this.changingPassword = true;
+    this.cdr.markForCheck();
     try {
       await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/change-password`, {
         currentPassword: this.currentPassword,
@@ -218,12 +226,15 @@ export class Settings implements OnInit {
       this.currentPassword = '';
       this.newPassword = '';
       this.confirmPassword = '';
+      this.cdr.markForCheck();
       this.snack.open('Contraseña actualizada', 'Cerrar', { duration: 3000 });
     } catch (err: any) {
       this.passwordError = err?.error?.message || err?.message || 'No se pudo cambiar la contraseña en el backend.';
       this.snack.open(this.passwordError, 'Cerrar', { duration: 4000 });
+      this.cdr.markForCheck();
     } finally {
       this.changingPassword = false;
+      this.cdr.markForCheck();
     }
   }
 }
