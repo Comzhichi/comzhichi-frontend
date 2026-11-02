@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
+import { AiChat } from '../../components/ai-chat/ai-chat';
 
 @Component({
   selector: 'app-coordinator-layout',
@@ -15,6 +16,7 @@ import { AuthService } from '../../service/auth.service';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    AiChat,
   ],
   templateUrl: './coordinator-layout.html',
   styleUrl: './coordinator-layout.css',
@@ -24,6 +26,8 @@ export class CoordinatorLayout {
   private router = inject(Router);
 
   sidebarOpen = signal(false);
+  aiAgentOpen = signal(false);
+  chatOpen = signal(false);
 
   get userName(): string {
     return this.auth.currentUser()?.fullName ?? 'Coordinador';
@@ -43,6 +47,16 @@ export class CoordinatorLayout {
 
   toggleSidebar(): void {
     this.sidebarOpen.update((v) => !v);
+  }
+
+  toggleAiAgent(): void {
+    this.aiAgentOpen.update((v) => !v);
+    this.chatOpen.set(false);
+    this.sidebarOpen.set(false);
+  }
+
+  openChat(): void {
+    this.chatOpen.set(true);
   }
 
   closeSidebar(): void {

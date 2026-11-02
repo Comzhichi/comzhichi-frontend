@@ -4,7 +4,7 @@
       @if (step() >= 4) {
         Completado
       } @else {
-        Paso {{ step() }} de {{ totalSteps }}
+        Paso {{ progressStep() }} de {{ progressTotal() }}
       }
     </p>
 

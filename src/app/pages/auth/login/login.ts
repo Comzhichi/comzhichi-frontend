@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormField, FormRoot, email, form, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -51,7 +52,8 @@ export class Login {
             await this.router.navigateByUrl(destination);
           } catch (e) {
             console.error('Login error:', e);
-            this.error.set(getErrorMessage(e));
+            const unauthorized = e instanceof HttpErrorResponse && (e.status === 401 || e.status === 404);
+            this.error.set(unauthorized ? 'Cuenta no encontrada' : getErrorMessage(e));
           }
         },
         onInvalid: () => {

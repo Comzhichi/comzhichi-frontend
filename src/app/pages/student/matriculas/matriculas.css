@@ -138,8 +138,8 @@
   border-radius: 0;
   font-size: 11px;
   font-weight: 600;
-  background-color: color-mix(in srgb, var(--color-cta) 15%, white);
-  color: var(--color-cta);
+  background-color: color-mix(in srgb, #229C78 15%, white);
+  color: #229C78;
 }
 
 .selected-row {

@@ -41,7 +41,7 @@ interface BackendProfile {
         </mat-card-header>
         <mat-card-content>
           @if (loadingProfile) {
-            <p>Cargando perfil desde el backend...</p>
+            <p>Cargando perfil...</p>
           } @else if (profileError) {
             <p class="error">{{ profileError }}</p>
           } @else if (profile) {

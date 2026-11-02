@@ -39,6 +39,10 @@ export const STUDENT_ROUTES: Routes = [
         path: 'ajustes',
         loadComponent: () => import('../settings/settings').then((m) => m.Settings),
       },
+      {
+        path: 'ayuda',
+        loadComponent: () => import('../help-center/help-center').then((m) => m.HelpCenter),
+      },
     ],
   },
 ];

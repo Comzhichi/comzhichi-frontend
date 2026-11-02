@@ -1,4 +1,4 @@
-<div class="page">
+﻿<div class="page">
   <header class="header">
     <div class="header-left">
       <img src="/comzhichi-logo.png" alt="" class="logo-img" />
@@ -8,6 +8,7 @@
     <nav class="header-nav" aria-label="Navegación principal">
       <a class="nav-link" routerLink="/parent" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
       <a class="nav-link" routerLink="/parent/seguimiento" routerLinkActive="active">Seguimiento</a>
+      <a class="nav-link" routerLink="/parent/horarios" routerLinkActive="active">Horarios</a>
       <a class="nav-link" routerLink="/parent/notificaciones" routerLinkActive="active">
         Notificaciones
         @if (unread() > 0) {
@@ -37,11 +38,11 @@
           <span>Ajustes</span>
         </a>
       <nav class="sidebar-nav" (click)="$event.stopPropagation()" aria-label="Menú lateral">
-        <a class="side-item" href="#" (click)="$event.preventDefault()">
+        <a class="side-item" routerLink="/parent/ayuda" (click)="closeSidebar()">
           <mat-icon>help_outline</mat-icon>
           <span>Centro de ayuda</span>
         </a>
-        <a class="side-item" href="#" (click)="$event.preventDefault()">
+        <a class="side-item" (click)="toggleAiAgent()">
           <mat-icon>smart_toy</mat-icon>
           <span>Agente IA</span>
         </a>
@@ -53,11 +54,21 @@
     </main>
   </div>
 
+  @if (aiAgentOpen() && !chatOpen()) {
+    <button class="ai-fab" type="button" (click)="openChat()" aria-label="Abrir chat con Agente IA">
+      <mat-icon>auto_awesome</mat-icon>
+    </button>
+  }
+
+  @if (chatOpen()) {
+    <app-ai-chat role="PARENT" (closed)="chatOpen.set(false)" />
+  }
+
   <footer class="footer">
     <span class="footer-copy">© 2026 Comzhichi. Todos los derechos reservados</span>
     <nav class="footer-links" aria-label="Enlaces institucionales">
       <a href="#" (click)="$event.preventDefault()">Seguridad</a>
-      <a href="#" (click)="$event.preventDefault()">Soporte t�cnico</a>
+      <a href="#" (click)="$event.preventDefault()">Soporte t�cnico</a>
       <a href="#" (click)="$event.preventDefault()">Condiciones</a>
     </nav>
   </footer>

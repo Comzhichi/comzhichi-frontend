@@ -28,8 +28,8 @@ export class Register {
   roles: { value: Role; label: string }[] = [
     { value: 'STUDENT', label: 'Estudiante' },
     { value: 'TEACHER', label: 'Docente' },
-    { value: 'COORDINATOR', label: 'Coordinador' },
-    { value: 'PARENT', label: 'Padre/Madre' },
+    { value: 'COORDINATOR', label: 'Coordinador académico' },
+    { value: 'PARENT', label: 'Familiar/Apoderado' },
   ];
   registerModel = signal({
     role: 'STUDENT' as Role,

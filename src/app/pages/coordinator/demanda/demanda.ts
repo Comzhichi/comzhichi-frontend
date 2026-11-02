@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +14,13 @@ import { Course } from '../../../model/course.model';
 import { Enrollment } from '../../../model/enrollment.model';
 import { LanguageFlagPipe } from '../../../util/language-flag.pipe';
 import { LanguageColorPipe } from '../../../util/language-color.pipe';
+
+interface LanguageDemandRow {
+  language: string;
+  enrolled: number;
+  totalVacancies: number;
+  demandPercent: number;
+}
 
 interface DemandRow {
   language: string;
@@ -39,7 +47,7 @@ function shiftOf(time: string): string {
 
 @Component({
   selector: 'app-coordinator-demanda',
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, LanguageFlagPipe, LanguageColorPipe],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, LanguageFlagPipe, LanguageColorPipe, DecimalPipe],
   templateUrl: './demanda.html',
   styleUrl: './demanda.css',
 })
@@ -100,6 +108,31 @@ export class Demanda implements OnInit {
   totalEnrolled = computed(() => this.rows().reduce((acc, r) => acc + r.enrolled, 0));
 
   hasData = computed(() => this.rows().length > 0 && this.totalEnrolled() > 0);
+
+  languageRows = computed<LanguageDemandRow[]>(() => {
+    const map = new Map<string, { enrolled: number; totalVacancies: number }>();
+    for (const s of this.sections()) {
+      const lang = this.languageOf(s);
+      const enrolled = this.enrollments().filter((e) => e.sectionId === s.id && e.status !== 'DROPPED').length;
+      const existing = map.get(lang);
+      if (existing) {
+        existing.enrolled += enrolled;
+        existing.totalVacancies += s.totalVacancies;
+      } else {
+        map.set(lang, { enrolled, totalVacancies: s.totalVacancies });
+      }
+    }
+    return [...map.entries()]
+      .map(([language, v]) => ({
+        language,
+        enrolled: v.enrolled,
+        totalVacancies: v.totalVacancies,
+        demandPercent: v.totalVacancies > 0 ? (v.enrolled / v.totalVacancies) * 100 : 0,
+      }))
+      .sort((a, b) => b.demandPercent - a.demandPercent);
+  });
+
+  hasLanguageData = computed(() => this.languageRows().length > 0);
 
   exportExcel(): void {
     if (!this.hasData()) return;

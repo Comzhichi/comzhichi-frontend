@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateChildFn, CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 import { Role } from '../model/auth.model';
 import { isOnboardingCompleted } from '../util/onboarding-flag';
@@ -28,6 +28,36 @@ export function roleGuard(allowedRole: Role): CanActivateFn {
     }
 
     return true;
+  };
+}
+
+/**
+ * Fuerza a los estudiantes que no han completado el onboarding a pasar por él
+ * antes de acceder a cualquier otra ruta de estudiante.
+ */
+export function studentOnboardingRedirectGuard(): CanActivateChildFn {
+  return (_route, state) => {
+    const auth = inject(AuthService);
+    const router = inject(Router);
+    const user = auth.currentUser();
+
+    // Si no es estudiante autenticado, el roleGuard ya se encargó.
+    if (!auth.isAuthenticated() || user?.role !== 'STUDENT') {
+      return true;
+    }
+
+    // Si ya completó el onboarding, seguir.
+    if (isOnboardingCompleted(user.email)) {
+      return true;
+    }
+
+    // Si ya va hacia el onboarding, dejar pasar (evita bucle).
+    if (state.url.startsWith('/student/onboarding')) {
+      return true;
+    }
+
+    router.navigate(['/student/onboarding']);
+    return false;
   };
 }
 

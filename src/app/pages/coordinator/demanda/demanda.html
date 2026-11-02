@@ -57,6 +57,43 @@
           </tbody>
         </table>
       </div>
+      <p class="export-note">Los archivos CSV y PDF se pueden descargar usando los botones de arriba.</p>
     </mat-card>
+
+    @if (hasLanguageData()) {
+      <mat-card class="card">
+        <div class="card-header">
+          <h2 class="card-title">Demanda por idioma</h2>
+          <p class="card-subtitle">Porcentaje de demanda calculado como (Matriculados / Vacantes Totales) × 100.</p>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Idioma</th>
+                <th>Matriculados</th>
+                <th>Vacantes Totales</th>
+                <th>Demanda (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of languageRows(); track r.language) {
+                <tr>
+                  <td>
+                    <span class="flag-inline" [style.background-color]="r.language | languageColor">
+                      <img [src]="r.language | languageFlag" alt="" />
+                    </span>
+                    {{ r.language }}
+                  </td>
+                  <td>{{ r.enrolled }}</td>
+                  <td>{{ r.totalVacancies }}</td>
+                  <td>{{ r.demandPercent | number:'1.1-1' }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card>
+    }
   }
 </div>

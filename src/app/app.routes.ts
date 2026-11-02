@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { roleGuard } from './guards/auth.guard';
+import { roleGuard, studentOnboardingRedirectGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -10,6 +10,7 @@ export const routes: Routes = [
   {
     path: 'student',
     canActivate: [roleGuard('STUDENT')],
+    canActivateChild: [studentOnboardingRedirectGuard],
     loadChildren: () =>
       import('./pages/student/student.routes').then((m) => m.STUDENT_ROUTES),
   },

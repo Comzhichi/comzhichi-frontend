@@ -59,6 +59,11 @@ export class Onboarding implements OnInit {
   // Q1
   hadCourse = signal<boolean | null>(null);
 
+  // Quien responde "No" se salta la busqueda de curso, asi que su flujo es de dos pasos.
+  private noCoursePath = computed(() => this.step() === 3 && this.hadCourse() === false);
+  progressStep = computed(() => (this.noCoursePath() ? 2 : this.step()));
+  progressTotal = computed(() => (this.noCoursePath() ? 2 : this.totalSteps));
+
   // Q2
   searchQuery = signal('');
   shiftFilter = signal('');

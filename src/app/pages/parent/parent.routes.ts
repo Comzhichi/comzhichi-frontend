@@ -14,12 +14,20 @@ export const PARENT_ROUTES: Routes = [
         loadComponent: () => import('./seguimiento/seguimiento').then((m) => m.Seguimiento),
       },
       {
+        path: 'horarios',
+        loadComponent: () => import('./horarios/horarios').then((m) => m.Horarios),
+      },
+      {
         path: 'notificaciones',
         loadComponent: () => import('./notificaciones/notificaciones').then((m) => m.Notificaciones),
       },
       {
         path: 'ajustes',
         loadComponent: () => import('../settings/settings').then((m) => m.Settings),
+      },
+      {
+        path: 'ayuda',
+        loadComponent: () => import('../help-center/help-center').then((m) => m.HelpCenter),
       },
     ],
   },

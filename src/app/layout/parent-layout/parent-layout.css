@@ -351,6 +351,37 @@
   outline: none;
 }
 
+/* ---------- Agente IA FAB ---------- */
+.ai-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-cta);
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 30;
+}
+
+.ai-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.ai-fab mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
   .main {
