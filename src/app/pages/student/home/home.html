@@ -1,0 +1,40 @@
+<div class="dashboard">
+  <header class="dash-header">
+    <div class="dash-text">
+      <h1 class="dash-title">Bienvenido, {{ userName }}</h1>
+      <p class="dash-subtitle">Aquí puedes ver tus matrículas activas.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (enrollments().length === 0) {
+    <div class="empty">
+      <mat-icon class="empty-icon">school</mat-icon>
+      <p>No tienes matrículas activas actualmente.</p>
+    </div>
+  } @else {
+    <div class="cards-grid">
+      @for (e of enrollments(); track e.id) {
+        <mat-card class="enrollment-card" [style.background-color]="e.courseName | languageColor" [style.--card-pastel]="e.courseName | languageColor">
+          <span class="flag-circle" [style.background-color]="e.courseName | languageColor"><img [src]="e.courseName | languageFlag" alt="" /></span>
+          <mat-card-header>
+            <mat-card-title>{{ e.courseName }}</mat-card-title>
+            <mat-card-subtitle>{{ e.sectionGroupCode }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="enrollment-meta">
+              <mat-icon>event</mat-icon>
+              <span>{{ e.enrollmentDate }}</span>
+            </p>
+            <mat-chip-set>
+              <mat-chip class="status-chip">{{ statusLabel(e.status) }}</mat-chip>
+            </mat-chip-set>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

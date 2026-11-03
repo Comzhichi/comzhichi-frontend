@@ -1,0 +1,115 @@
+<div class="horarios-wrap">
+  <mat-card class="card">
+    <div class="card-header">
+      <h2 class="card-title">Calendario de horarios</h2>
+      <p class="card-subtitle">Visualiza todas las secciones, horarios y docentes asignados.</p>
+    </div>
+
+    @if (error()) {
+      <div class="alert error">{{ error() }}</div>
+    }
+
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar por curso, sección o docente</mat-label>
+        <input matInput type="text"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Idioma</mat-label>
+        <mat-select [value]="selectedLanguage()"
+          (selectionChange)="selectedLanguage.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lang of languages(); track lang) {
+            <mat-option [value]="lang">{{ lang }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Nivel</mat-label>
+        <mat-select [value]="selectedLevel()"
+          (selectionChange)="selectedLevel.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (lvl of levels(); track lvl) {
+            <mat-option [value]="lvl">{{ levelCategory(lvl) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Horario</mat-label>
+        <mat-select [value]="selectedSchedule()"
+          (selectionChange)="selectedSchedule.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (sch of scheduleOptions(); track sch) {
+            <mat-option [value]="sch">{{ sch }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Docente</mat-label>
+        <mat-select [value]="selectedTeacher()"
+          (selectionChange)="selectedTeacher.set($event.value)">
+          <mat-option value="">Todos</mat-option>
+          @for (t of teachers(); track t) {
+            <mat-option [value]="t">{{ t }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (loading()) {
+      <div class="center"><mat-spinner diameter="36" /></div>
+    } @else if (filteredSections().length === 0) {
+      <p class="empty-msg">No se encontraron secciones.</p>
+    } @else {
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Idioma</th>
+              <th>Nivel</th>
+              <th>Curso</th>
+              <th>Sección</th>
+              <th>Días</th>
+              <th>Horario</th>
+              <th>Aula</th>
+              <th>Docente</th>
+              <th>Vacantes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of filteredSections(); track s.id) {
+              <tr>
+                <td>
+                  <span class="flag-inline"
+                    [style.background-color]="languageOfSection(s) | languageColor">
+                    <img [src]="languageOfSection(s) | languageFlag" alt="" />
+                  </span>
+                  {{ languageOfSection(s) || '—' }}
+                </td>
+                <td>{{ levelCategory(levelOfSection(s)) || '—' }}</td>
+                <td>{{ s.courseName }}</td>
+                <td>{{ s.groupCode }}</td>
+                <td>{{ formatDays(s.dayOfWeek) }}</td>
+                <td>{{ s.startTime }} – {{ s.endTime }}</td>
+                <td>{{ s.classroom }}</td>
+                <td>{{ s.teacherName || '—' }}</td>
+                <td>
+                  <span class="vacancy" [class.none]="s.availableVacancies <= 0">
+                    {{ s.availableVacancies }} / {{ s.totalVacancies }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card>
+</div>

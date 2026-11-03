@@ -1,0 +1,56 @@
+<div class="dashboard">
+  <header class="dash-header">
+    <div>
+      <h1 class="dash-title">Calendario semanal</h1>
+      <p class="dash-subtitle">Tu ocupación esta semana.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (sections().length === 0) {
+    <div class="empty">
+      <mat-icon class="empty-icon">schedule</mat-icon>
+      <p>No tienes secciones asignadas.</p>
+    </div>
+  } @else {
+    <div class="calendar">
+      <div class="cal-time-col">
+        <div class="time-header"></div>
+        @for (h of hours; track h) {
+          <div class="time-label">{{ h }}:00</div>
+        }
+      </div>
+      @for (day of days; track day.key) {
+        <div class="cal-day">
+          <div class="day-header">{{ day.label }}</div>
+          <div class="day-body">
+            @for (s of sectionsByDay(day.key); track s.id) {
+              <div class="event" [style.top.px]="eventTop(s)" [style.height.px]="eventHeight(s)">
+                <strong>{{ s.courseName }}</strong>
+                <span>{{ s.startTime }} - {{ s.endTime }}</span>
+                <span>{{ s.classroom }}</span>
+                <span>{{ s.groupCode }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="cards-grid">
+      @for (s of sections(); track s.id) {
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>{{ s.courseName }}</mat-card-title>
+            <mat-card-subtitle>{{ s.groupCode }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="section-meta">{{ formatDays(s.dayOfWeek) }} {{ s.startTime }} - {{ s.endTime }}</p>
+            <p class="section-meta">{{ s.classroom }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

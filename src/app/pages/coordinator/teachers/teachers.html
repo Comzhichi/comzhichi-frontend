@@ -1,0 +1,33 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Profesores</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="center"><mat-spinner diameter="40" /></div>
+  } @else if (teachers().length === 0) {
+    <div class="empty"><p>No hay profesores registrados.</p></div>
+  } @else {
+    <div class="cards-grid">
+      @for (t of teachers(); track t.id) {
+        <mat-card class="teacher-card">
+          <mat-card-header>
+            <mat-card-title>{{ t.userFullName }}</mat-card-title>
+            <mat-card-subtitle>{{ t.specialty }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ t.userEmail }}</p>
+            <p class="status" [class.inactive]="!isActive(t)">
+              {{ isActive(t) ? 'Activo' : 'Dado de baja' }}
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-stroked-button color="warn" (click)="deactivate(t)" [disabled]="!isActive(t)">
+              Dar de baja
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

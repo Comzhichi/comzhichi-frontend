@@ -1,0 +1,145 @@
+:host {
+  display: block;
+}
+
+.dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.dash-header {
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 0;
+  
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.dash-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+  line-height: 1.2;
+  position: relative;
+}
+
+.dash-subtitle {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.5;
+  position: relative;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 0;
+  color: var(--color-text);
+  text-align: center;
+  
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--color-secondary);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.section-card {
+  position: relative;
+  border-radius: 0;
+  border: 1px solid #e4e4e7;
+  
+  background: #ffffff;
+  overflow: hidden;
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.section-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-secondary);
+}
+
+.section-card:hover {
+  transform: translateY(-4px);
+  
+  border-color: color-mix(in srgb, var(--color-secondary) 20%, white);
+}
+
+.section-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text);
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.section-meta mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-secondary);
+}
+
+.cta-button {
+  background-color: var(--color-cta) !important;
+  color: #ffffff !important;
+}
+
+.cta-button:hover {
+  background-color: var(--color-cta) !important;
+}
+
+.flag-circle {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px; border-radius: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; background: color-mix(in srgb, var(--color-primary) 15%, white);
+  
+  z-index: 1;
+}

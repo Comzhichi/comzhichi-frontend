@@ -1,0 +1,48 @@
+<div class="page">
+  <aside class="brand-panel">
+    <div class="deco-circle c1"></div>
+    <div class="deco-circle c2"></div>
+    <div class="brand-content">
+      <div class="logo">
+        <img src="/comzhichi-logo.png" alt="Comzhichi" class="logo-img" />
+      </div>
+      <h1>Domina un<br/>nuevo idioma</h1>
+      <p>La plataforma de la academia para aprender, practicar y certificarte con los mejores profesores.</p>
+      <ul class="features">
+        <li><mat-icon>check_circle</mat-icon> Clases en vivo y grabadas</li>
+        <li><mat-icon>check_circle</mat-icon> Seguimiento de tu progreso</li>
+        <li><mat-icon>check_circle</mat-icon> Certificados oficiales</li>
+      </ul>
+    </div>
+  </aside>
+  <main class="form-panel">
+    <div class="form-card">
+      <div class="card-header">
+        <h2>Bienvenido de nuevo</h2>
+        <p>Inicia sesión para continuar</p>
+      </div>
+      <form [formRoot]="loginForm" class="form">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput type="email" [formField]="loginForm.email" />
+          <mat-error>{{ loginForm.email().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput type="password" [formField]="loginForm.password" />
+          <mat-error>{{ loginForm.password().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        @if (error()) {
+          <p class="error"><mat-icon>error_outline</mat-icon> {{ error() }}</p>
+        }
+        <button matButton="filled" type="submit" class="submit-btn">Ingresar</button>
+      </form>
+      <div class="card-footer">
+        <span>¿No tienes cuenta?</span>
+        <a routerLink="/auth/register">Crear cuenta</a>
+      </div>
+    </div>
+  </main>
+</div>
