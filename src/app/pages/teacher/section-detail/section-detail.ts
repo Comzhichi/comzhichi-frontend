@@ -75,7 +75,7 @@ export class SectionDetail implements OnInit {
     this.enrollmentService.getBySection(this.sectionId).subscribe({
       next: (data) => {
         this.enrollments.set(data.filter((e) =>
-          e.sectionId === this.sectionId && e.status !== 'DROPPED'
+          e.sectionId === this.sectionId && (e.status === 'ACTIVE' || e.status === 'DROPPED')
         ));
         this.loading.set(false);
       },

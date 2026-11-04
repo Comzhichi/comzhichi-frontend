@@ -194,7 +194,7 @@ export class Sections implements OnInit {
     this.loadingEnrollments.set(true);
     this.closeTransfer();
     this.enrollmentService.getBySection(s.id).subscribe(data => {
-      this.enrollments.set(data.filter(e => e.status === 'ACTIVE'));
+      this.enrollments.set(data.filter(e => e.status === 'ACTIVE' || e.status === 'DROPPED'));
       this.loadingEnrollments.set(false);
     });
   }
@@ -245,7 +245,7 @@ export class Sections implements OnInit {
         const section = this.selectedSection();
         if (section) {
           this.enrollmentService.getBySection(section.id).subscribe(data => {
-            this.enrollments.set(data.filter(e => e.status === 'ACTIVE'));
+            this.enrollments.set(data.filter(e => e.status === 'ACTIVE' || e.status === 'DROPPED'));
           });
         }
         this.sectionService.getAll().subscribe(d => this.sections.set(d));

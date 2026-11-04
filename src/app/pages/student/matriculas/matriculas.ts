@@ -396,13 +396,10 @@ export class Matriculas implements OnInit {
   }
 
   reloadEnrolled(): void {
-    const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
       next: (data) => {
-        const mine = data.filter((e) =>
-          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
-        );
+        const mine = data.filter((e) => email && e.studentEmail === email);
         this.enrolled.set(mine);
         this.loadLevelResults(mine);
       },
@@ -487,13 +484,10 @@ export class Matriculas implements OnInit {
       next: (data) => this.teachers.set(data),
       error: () => this.teachers.set([]),
     });
-    const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
       next: (data) => {
-        const mine = data.filter((e) =>
-          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
-        );
+        const mine = data.filter((e) => email && e.studentEmail === email);
         this.enrolled.set(mine);
         this.loadLevelResults(mine);
         this.loading.set(false);

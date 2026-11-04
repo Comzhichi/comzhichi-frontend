@@ -153,6 +153,17 @@ export class Settings implements OnInit {
   changingPassword = false;
 
   ngOnInit(): void {
+    // Mostrar de inmediato los datos ya disponibles (sin esperar al backend)
+    if (this.user) {
+      this.profile = {
+        userFullName: this.user.fullName,
+        userEmail: this.user.email,
+        role: this.user.role,
+        enabled: this.user.enabled,
+      };
+    }
+    this.loadingProfile = false;
+    // Enriquecer en segundo plano con el perfil del backend (no bloquea la UI)
     this.loadProfile();
   }
 
@@ -160,18 +171,17 @@ export class Settings implements OnInit {
     const role = this.user?.role;
     const endpoint = this.profileEndpoint(role);
     if (!endpoint) {
-      this.loadingProfile = false;
-      this.profileError = 'No se pudo determinar el perfil del usuario.';
       return;
     }
     this.http.get<BackendProfile>(`${environment.apiUrl}${endpoint}`).subscribe({
       next: (data) => {
-        this.profile = data;
-        this.loadingProfile = false;
+        this.profile = { ...this.profile, ...data };
       },
       error: (err) => {
-        this.profileError = err?.error?.message || 'No se pudo cargar el perfil desde el backend.';
-        this.loadingProfile = false;
+        // No bloqueamos la UI: mantenemos los datos locales y mostramos un aviso leve
+        if (!this.profile) {
+          this.profileError = err?.error?.message || 'No se pudo cargar el perfil desde el backend.';
+        }
       },
     });
   }
