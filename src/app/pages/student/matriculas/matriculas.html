@@ -44,7 +44,7 @@
                     [class.active]="e.status === 'ACTIVE' && levelResult(e.id) !== 'Aprobado'"
                     [class.approved]="e.status === 'APPROVED' || levelResult(e.id) === 'Aprobado'"
                     >{{
-                    levelResult(e.id) || statusLabel(e.status)
+                    (e.status === 'DROPPED' || e.status === 'FAILED' ? statusLabel(e.status) : (levelResult(e.id) || statusLabel(e.status)))
                   }}</span>
                 </td>
                 <td>{{ teacherNameForEnrollment(e) }}</td>
