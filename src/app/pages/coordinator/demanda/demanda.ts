@@ -75,7 +75,7 @@ export class Demanda implements OnInit {
       const level = this.levelOf(s);
       const schedule = shiftOf(s.startTime);
       const key = `${lang}|${level}|${schedule}`;
-      const enrolled = this.enrollments().filter((e) => e.sectionId === s.id && e.status !== 'DROPPED').length;
+      const enrolled = this.enrollments().filter((e) => e.sectionId === s.id && e.status === 'ACTIVE').length;
       const existing = map.get(key);
       if (existing) {
         existing.sections += 1;

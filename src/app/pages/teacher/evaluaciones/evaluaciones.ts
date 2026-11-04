@@ -43,7 +43,7 @@ export class Evaluaciones implements OnInit {
         if (sections.length === 0) return of([]);
         return forkJoin(sections.map((s) =>
           this.enrollmentService.getBySection(s.id).pipe(
-            map((enrs: Enrollment[]) => enrs.map((e) => ({ enrollment: e, section: s })))
+            map((enrs: Enrollment[]) => enrs.filter((e) => e.status === 'ACTIVE').map((e) => ({ enrollment: e, section: s })))
           )
         )).pipe(map((arrs) => arrs.flat()));
       }),

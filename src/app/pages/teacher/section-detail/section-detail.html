@@ -15,8 +15,9 @@
           @for (e of enrollments(); track e.id) {
             <div class="student-item"
               [class.selected]="selected()?.id === e.id"
-              (click)="selectEnrollment(e)">
-              <span>{{ e.studentFullName }}</span>
+              [class.dropped]="e.status === 'DROPPED'"
+              (click)="e.status === 'ACTIVE' && selectEnrollment(e)">
+              <span>{{ e.studentFullName }} @if (e.status === 'DROPPED') { <span class="status-tag">(Dado de baja)</span> }</span>
               <span class="course-name">{{ e.courseName }}</span>
             </div>
           }

@@ -396,14 +396,20 @@ export class Matriculas implements OnInit {
   }
 
   reloadEnrolled(): void {
-    const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
       next: (data) => {
-        const mine = data.filter((e) =>
-          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
-        );
-        this.enrolled.set(mine);
+        const mine = data.filter((e) => email && e.studentEmail === email);
+        const rank: Record<string, number> = { ACTIVE: 0, APPROVED: 1, FAILED: 2, DROPPED: 3 };
+        const deduped = new Map<string, Enrollment>();
+        for (const e of mine) {
+          const key = (e.courseName || '') + '|' + (e.sectionGroupCode || e.sectionId);
+          const prev = deduped.get(key);
+          if (!prev || (rank[e.status] ?? 9) < (rank[prev.status] ?? 9)) {
+            deduped.set(key, e);
+          }
+        }
+        this.enrolled.set([...deduped.values()]);
         this.loadLevelResults(mine);
       },
       error: () => {},
@@ -487,14 +493,20 @@ export class Matriculas implements OnInit {
       next: (data) => this.teachers.set(data),
       error: () => this.teachers.set([]),
     });
-    const studentId = this.auth.currentUser()?.id ?? 0;
     const email = this.auth.currentUser()?.email ?? '';
     this.enrollmentService.getAll().subscribe({
       next: (data) => {
-        const mine = data.filter((e) =>
-          (studentId && e.studentId === studentId) || (email && e.studentEmail === email)
-        );
-        this.enrolled.set(mine);
+        const mine = data.filter((e) => email && e.studentEmail === email);
+        const rank: Record<string, number> = { ACTIVE: 0, APPROVED: 1, FAILED: 2, DROPPED: 3 };
+        const deduped = new Map<string, Enrollment>();
+        for (const e of mine) {
+          const key = (e.courseName || '') + '|' + (e.sectionGroupCode || e.sectionId);
+          const prev = deduped.get(key);
+          if (!prev || (rank[e.status] ?? 9) < (rank[prev.status] ?? 9)) {
+            deduped.set(key, e);
+          }
+        }
+        this.enrolled.set([...deduped.values()]);
         this.loadLevelResults(mine);
         this.loading.set(false);
       },
