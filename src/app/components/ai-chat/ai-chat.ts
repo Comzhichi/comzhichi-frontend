@@ -7,13 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AgentService } from '../../service/agent.service';
-import { ChatResponse, ParentReport } from '../../model/agent.model';
+import { ChatResponse, GroupSummary, ParentReport } from '../../model/agent.model';
 
 interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
   report?: ParentReport;
+  groupSummary?: GroupSummary;
 }
 
 interface SuggestedPrompt {
@@ -64,6 +65,7 @@ export class AiChat {
       ],
       TEACHER: [
         { text: 'Genera un resumen del desempeño de los estudiantes con más faltas' },
+        { text: 'Genera un resumen del desempeño de un grupo (indica el código)' },
         { text: 'Asígnale "Presente" en asistencia a todos los estudiantes de la sección que te especificaré' },
       ],
       COORDINATOR: [
@@ -91,9 +93,16 @@ export class AiChat {
     this.agentService.chat(text).subscribe({
       next: (res: ChatResponse) => {
         const report = this.asParentReport(res?.data);
+        const groupSummary = this.asGroupSummary(res?.data);
         this.messages.update((msgs) => [
           ...msgs,
-          { text: res?.message || 'Sin respuesta del agente.', isUser: false, timestamp: new Date(), report: report ?? undefined },
+          {
+            text: res?.message || 'Sin respuesta del agente.',
+            isUser: false,
+            timestamp: new Date(),
+            report: report ?? undefined,
+            groupSummary: groupSummary ?? undefined,
+          },
         ]);
       },
       error: () => {
@@ -117,6 +126,14 @@ export class AiChat {
 
   close(): void {
     this.closed.emit();
+  }
+
+  private asGroupSummary(data: unknown): GroupSummary | null {
+    if (!data || typeof data !== 'object') return null;
+    const d = data as Record<string, unknown>;
+    if (typeof d['status'] !== 'string') return null;
+    if (!('groupCode' in d) && !('totalEnrollments' in d) && !('observations' in d)) return null;
+    return d as unknown as GroupSummary;
   }
 
   private asParentReport(data: unknown): ParentReport | null {

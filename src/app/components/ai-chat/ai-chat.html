@@ -62,6 +62,26 @@
                   }
                 </div>
               }
+
+              @if (!msg.isUser && msg.groupSummary && msg.groupSummary.status === 'OK') {
+                <div class="report-card">
+                  <div class="report-item">
+                    <div class="report-title">{{ msg.groupSummary.groupCode }} — {{ msg.groupSummary.courseName }} ({{ msg.groupSummary.level }})</div>
+                    <div class="report-row">Idioma: {{ msg.groupSummary.language }}</div>
+                    <div class="report-row">Matrículas: {{ msg.groupSummary.totalEnrollments }} (activas: {{ msg.groupSummary.activeEnrollments }})</div>
+                    <div class="report-row">Asistencia: {{ msg.groupSummary.attendanceRate | number:'1.0-1' }}%</div>
+                    <div class="report-row">Promedio de notas: {{ msg.groupSummary.averageScore != null ? (msg.groupSummary.averageScore | number:'1.0-1') : 'Sin evaluaciones' }}</div>
+                    @if (msg.groupSummary.observations?.length) {
+                      <div class="report-row">Observaciones:</div>
+                      <ul class="obs-list">
+                        @for (obs of msg.groupSummary.observations; track obs) {
+                          <li>{{ obs }}</li>
+                        }
+                      </ul>
+                    }
+                  </div>
+                </div>
+              }
             </div>
             @if (msg.isUser) {
               <mat-icon class="message-icon">account_circle</mat-icon>
