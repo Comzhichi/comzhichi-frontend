@@ -18,6 +18,21 @@ export interface ParentReport {
   items: ParentReportItem[];
 }
 
+export interface GroupSummary {
+  status: 'OK' | 'INSUFFICIENT_DATA' | string;
+  message: string;
+  sectionId: number | null;
+  groupCode: string | null;
+  courseName: string | null;
+  language: string | null;
+  level: string | null;
+  totalEnrollments: number;
+  activeEnrollments: number;
+  attendanceRate: number;
+  averageScore: number | null;
+  observations: string[];
+}
+
 export interface ChatResponse {
   message: string;
   data: unknown;
