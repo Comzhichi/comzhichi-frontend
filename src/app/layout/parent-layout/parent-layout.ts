@@ -5,10 +5,11 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from '../../service/auth.service';
 import { NotificationService } from '../../service/notification.service';
+import { AiChat } from '../../components/ai-chat/ai-chat';
 
 @Component({
   selector: 'app-parent-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatIconModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatIconModule, AiChat],
   templateUrl: './parent-layout.html',
   styleUrl: './parent-layout.css',
 })
@@ -18,6 +19,8 @@ export class ParentLayout implements OnInit {
   private notificationService = inject(NotificationService);
 
   sidebarOpen = signal(false);
+  aiAgentOpen = signal(false);
+  chatOpen = signal(false);
 
   /** Cantidad de notificaciones no leídas, mostrada como badge en el menú. */
   unread = signal(0);
@@ -50,6 +53,15 @@ export class ParentLayout implements OnInit {
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
+  }
+
+  toggleAiAgent(): void {
+    this.aiAgentOpen.update((v) => !v);
+    if (!this.aiAgentOpen()) this.chatOpen.set(false);
+  }
+
+  openChat(): void {
+    this.chatOpen.set(true);
   }
 
   logout(): void {
