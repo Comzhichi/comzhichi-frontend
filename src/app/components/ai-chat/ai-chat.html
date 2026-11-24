@@ -19,18 +19,14 @@
   </div>
 
   @if (!isMinimized()) {
-    <!-- Messages Area -->
     <div class="chat-messages">
       @if (messages().length === 0) {
-        <!-- Welcome Message -->
         <div class="message ai-message">
           <mat-icon class="message-icon">public</mat-icon>
           <div class="message-bubble">
             <p>{{ welcomeMessage }}</p>
           </div>
         </div>
-
-        <!-- Suggested Prompts -->
         @if (suggestedPrompts.length > 0) {
           <div class="suggested-prompts">
             @for (prompt of suggestedPrompts; track prompt.text) {
@@ -41,7 +37,6 @@
           </div>
         }
       } @else {
-        <!-- Message History -->
         @for (msg of messages(); track msg.timestamp) {
           <div class="message" [class.user-message]="msg.isUser" [class.ai-message]="!msg.isUser">
             @if (!msg.isUser) {
@@ -49,6 +44,8 @@
             }
             <div class="message-bubble">
               <p>{{ msg.text }}</p>
+
+              <!-- US05: reporte familiar -->
               @if (!msg.isUser && msg.report && msg.report.status === 'OK' && msg.report.items?.length) {
                 <div class="report-card">
                   @for (item of msg.report.items; track item.courseName + item.studentName) {
@@ -56,13 +53,14 @@
                       <div class="report-title">{{ item.studentName }} — {{ item.language }} ({{ item.level }})</div>
                       <div class="report-row">Curso: {{ item.courseName }}</div>
                       <div class="report-row">Estado: {{ item.enrollmentStatus }}</div>
-                      <div class="report-row">Promedio de notas: {{ item.averageScore != null ? (item.averageScore | number:'1.0-1') : 'Sin evaluaciones' }}</div>
+                      <div class="report-row">Promedio: {{ item.averageScore != null ? (item.averageScore | number:'1.0-1') : 'Sin evaluaciones' }}</div>
                       <div class="report-row">Inasistencias: {{ item.absencePercentage | number:'1.0-1' }}% ({{ item.absences }}/{{ item.totalAttendances }})</div>
                     </div>
                   }
                 </div>
               }
 
+              <!-- US28: resumen de grupo -->
               @if (!msg.isUser && msg.groupSummary && msg.groupSummary.status === 'OK') {
                 <div class="report-card">
                   <div class="report-item">
@@ -70,7 +68,7 @@
                     <div class="report-row">Idioma: {{ msg.groupSummary.language }}</div>
                     <div class="report-row">Matrículas: {{ msg.groupSummary.totalEnrollments }} (activas: {{ msg.groupSummary.activeEnrollments }})</div>
                     <div class="report-row">Asistencia: {{ msg.groupSummary.attendanceRate | number:'1.0-1' }}%</div>
-                    <div class="report-row">Promedio de notas: {{ msg.groupSummary.averageScore != null ? (msg.groupSummary.averageScore | number:'1.0-1') : 'Sin evaluaciones' }}</div>
+                    <div class="report-row">Promedio: {{ msg.groupSummary.averageScore != null ? (msg.groupSummary.averageScore | number:'1.0-1') : 'Sin evaluaciones' }}</div>
                     @if (msg.groupSummary.observations?.length) {
                       <div class="report-row">Observaciones:</div>
                       <ul class="obs-list">
@@ -82,6 +80,58 @@
                   </div>
                 </div>
               }
+
+              <!-- US26: secciones disponibles -->
+              @if (!msg.isUser && msg.sections?.length) {
+                <div class="report-card">
+                  @for (s of msg.sections; track s.id) {
+                    <div class="report-item">
+                      <div class="report-title">{{ s.courseName }} — {{ s.courseLevel }}</div>
+                      <div class="report-row">Grupo: {{ s.groupCode }}</div>
+                      <div class="report-row">Horario: {{ s.dayOfWeek }} {{ s.startTime }}–{{ s.endTime }}</div>
+                      <div class="report-row">Vacantes: {{ s.availableVacancies }}</div>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- US27: recomendaciones -->
+              @if (!msg.isUser && msg.recommendations?.length) {
+                <div class="report-card">
+                  @for (r of msg.recommendations; track r.language) {
+                    <div class="report-item">
+                      <div class="report-title">{{ r.language }}</div>
+                      @if (r.status === 'OK') {
+                        <div class="report-row">Nivel actual: {{ r.currentLevel ?? '—' }}</div>
+                        <div class="report-row">Siguiente curso: {{ r.nextCourseName }} ({{ r.nextCourseLevel }})</div>
+                      } @else {
+                        <div class="report-row">{{ r.message ?? r.status }}</div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- US29: resultado de matrícula -->
+              @if (!msg.isUser && msg.enrollResult) {
+                <div class="report-card">
+                  <div class="report-item">
+                    @if (msg.enrollResult.status === 'CONFIRMATION_REQUIRED') {
+                      <div class="report-title">Confirmar matrícula</div>
+                      <div class="report-row">Curso: {{ msg.enrollResult.course }} ({{ msg.enrollResult.level }})</div>
+                      <div class="report-row">Grupo: {{ msg.enrollResult.groupCode }}</div>
+                      <div class="report-row">Horario: {{ msg.enrollResult.schedule }}</div>
+                      <div class="report-row">Vacantes: {{ msg.enrollResult.vacancies }}</div>
+                    } @else if (msg.enrollResult.status === 'ENROLLED') {
+                      <div class="report-title" style="color: var(--color-secondary, #229C78)">✓ Matrícula registrada</div>
+                      <div class="report-row">{{ msg.enrollResult.message }}</div>
+                    } @else {
+                      <div class="report-row">{{ msg.enrollResult.message }}</div>
+                    }
+                  </div>
+                </div>
+              }
+
             </div>
             @if (msg.isUser) {
               <mat-icon class="message-icon">account_circle</mat-icon>
@@ -98,9 +148,11 @@
           </div>
         </div>
       }
+
+      <div #messagesEnd></div>
     </div>
 
-    <!-- Input Area -->
+    <!-- Input -->
     <div class="chat-input">
       <mat-form-field appearance="outline" class="input-field">
         <input
@@ -111,6 +163,18 @@
           [disabled]="isLoading()"
         />
       </mat-form-field>
+
+      @if (voiceSupported) {
+        <button
+          class="voice-btn"
+          (click)="toggleVoice()"
+          [class.listening]="isListening()"
+          [disabled]="isLoading()"
+          aria-label="Entrada por voz">
+          <mat-icon>{{ isListening() ? 'mic' : 'mic_none' }}</mat-icon>
+        </button>
+      }
+
       <button class="send-btn" (click)="sendMessage()" [disabled]="!inputText().trim() || isLoading()" aria-label="Enviar">
         <mat-icon>send</mat-icon>
       </button>
