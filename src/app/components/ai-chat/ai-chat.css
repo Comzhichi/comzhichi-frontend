@@ -254,3 +254,24 @@
 
 .obs-list { margin: 4px 0 0 18px; padding: 0; font-size: 13px; }
 .obs-list li { margin-bottom: 2px; }
+
+.voice-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.voice-btn.listening {
+  color: var(--color-primary, #8C239C);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
