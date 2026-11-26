@@ -17,7 +17,7 @@ const FLAGS: Record<string, string> = {
 @Pipe({ name: 'languageFlag', standalone: true })
 export class LanguageFlagPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
-    if (!value) return '/flag-en.png';
+    if (!value) return 'flag-en.png';
     const key = value.trim().toLowerCase();
     let code = FLAGS[key];
     if (!code) {
@@ -26,6 +26,6 @@ export class LanguageFlagPipe implements PipeTransform {
       }
     }
     if (!code) code = 'en';
-    return `/flag-${code}.png`;
+    return `flag-${code}.png`;
   }
 }
